@@ -120,13 +120,6 @@ esp_err_t send_web_page(httpd_req_t *req)
     response = httpd_resp_send(req, main_resp, HTTPD_RESP_USE_STRLEN);
 
     return response;
-
-    // int response;
-    // if (led_state == 0)
-    //     response = httpd_resp_send(req, off_resp, HTTPD_RESP_USE_STRLEN);
-    // else
-    //     response = httpd_resp_send(req, on_resp, HTTPD_RESP_USE_STRLEN);
-    // return response;
 }
 
 esp_err_t Web_main_handler(httpd_req_t *req)
