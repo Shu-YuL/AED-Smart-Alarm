@@ -1,12 +1,10 @@
-// #include "oled_include.h"
 #include "wifi_include.h"
-#include "oled_init.h"
-#include "oled_functions.h"
 #include "server_include.h"
 
-static const char *TAG = "User Message";
+#include "ssd1306.h"
+#include "font8x8_basic.h"
 
-lv_disp_t *assign_disp;
+static const char *TAG = "Main";
 
 /***** Wifi Statics *****/
 /* FreeRTOS event group to signal when wifi is connected*/
@@ -112,28 +110,48 @@ void connect_wifi(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
+SSD1306_t dev; // Global variable for oled device address
+
 void app_main(void)
 {
+    /* oled init */
+    int center, top, bottom;
+    char lineChar[20];
+
+    ESP_LOGI(TAG, "INTERFACE is i2c");
+    ESP_LOGI(TAG, "CONFIG_SDA_GPIO=%d",CONFIG_SDA_GPIO);
+    ESP_LOGI(TAG, "CONFIG_SCL_GPIO=%d",CONFIG_SCL_GPIO);
+    ESP_LOGI(TAG, "CONFIG_RESET_GPIO=%d",CONFIG_RESET_GPIO);
+    i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
+
+#if CONFIG_FLIP
+    dev._flip = true;
+    ESP_LOGW(tag, "Flip upside down");
+#endif
+
+    ssd1306_init(&dev, 128, 64);
+
+    ssd1306_clear_screen(&dev, false);
+
     /* Wifi initialization */
-    setup_led();
+    oled_printf(&dev, 0, "1 Starting...");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     setup_nvs();
-    // setup_wifi();
-    // connect_wifi();
-
-    /* Initialization. I2C Interfaced OLED setup. Returns the address of the assigned display */
-    assign_disp = oled_init();
-
-    lv_obj_clean(lv_scr_act()); // clear screen
-    oled_printf(assign_disp, 0, 20, "Starting...");
-    // oled_printf(assign_disp, 0, 0, "2nd Floor");
-    // oled_printf(assign_disp, 0, 20, "ETLC");
-    // oled_printf(assign_disp, 0, 40, "Bat Medium");
+    oled_printf(&dev, 1, "2 NVS OK");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
 
     /* Server */
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     connect_wifi();
 
+    oled_printf(&dev, 2, "3 WIFI OK");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     setup_server();
+
+    oled_printf(&dev, 3, "4 SERVER MAIN");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
 
     // /* Start the HTTP server */
     // httpd_handle_t server = setup_server();

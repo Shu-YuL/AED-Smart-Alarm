@@ -19,6 +19,7 @@ void setup_nvs(void) {
     ESP_ERROR_CHECK(ret);
 }
 
+#if MD
 void setup_wifi(void) {
     //to setup ESP32 as a station (STA) to a simple non-WPA2 access point (AP) like home Wi-Fi 
 
@@ -50,30 +51,32 @@ void setup_wifi(void) {
     return;
 }
 
-// esp_err_t connect_wifi(void) {
-//     //attempts to connect ESP32 to a WiFi Access Point specified by setup_wifi()
+esp_err_t connect_wifi(void) {
+    //attempts to connect ESP32 to a WiFi Access Point specified by setup_wifi()
     
-//     esp_err_t wifi_connection_status = !ESP_OK;
-//     uint8_t tries = 0;
+    esp_err_t wifi_connection_status = !ESP_OK;
+    uint8_t tries = 0;
 
-//     while (wifi_connection_status != ESP_OK && tries < WIFI_MAX_TRIES ) {  //attempt to connect to AP until connection established, or max attempts reached
-//         wifi_connection_status = esp_wifi_connect();
-//         //vTaskDelay(2000 / portTICK_PERIOD_MS); //wait 2s before retrying to connect to AP
-//         tries++;
-//     }
+    while (wifi_connection_status != ESP_OK && tries < WIFI_MAX_TRIES ) {  //attempt to connect to AP until connection established, or max attempts reached
+        wifi_connection_status = esp_wifi_connect();
+        //vTaskDelay(2000 / portTICK_PERIOD_MS); //wait 2s before retrying to connect to AP
+        tries++;
+    }
 
 
-//     if (wifi_connection_status == ESP_OK) {
-//         ESP_LOGI(TAG, "WiFi Successfully Connected!");
-//         wifi_ap_record_t ap_info;
-//         esp_wifi_sta_get_ap_info(&ap_info);
-//         ESP_LOGI(TAG, "__________________________________________");
-//         ESP_LOGI(TAG, "AP SSID: %s, AP MAC Address: %s, rssi: %d ", ap_info.ssid, ap_info.bssid, ap_info.rssi);
-//         gpio_set_level(LED_GPIO, 1);
-//     }
-//     else {ESP_LOGI(TAG, "WiFi Failed to Connected");
-//     gpio_set_level(LED_GPIO, 0);
-//     }
+    if (wifi_connection_status == ESP_OK) {
+        ESP_LOGI(TAG, "WiFi Successfully Connected!");
+        wifi_ap_record_t ap_info;
+        esp_wifi_sta_get_ap_info(&ap_info);
+        ESP_LOGI(TAG, "__________________________________________");
+        ESP_LOGI(TAG, "AP SSID: %s, AP MAC Address: %s, rssi: %d ", ap_info.ssid, ap_info.bssid, ap_info.rssi);
+        gpio_set_level(LED_GPIO, 1);
+    }
+    else {ESP_LOGI(TAG, "WiFi Failed to Connected");
+    gpio_set_level(LED_GPIO, 0);
+    }
     
-//     return wifi_connection_status;
-// }
+    return wifi_connection_status;
+}
+
+#endif
