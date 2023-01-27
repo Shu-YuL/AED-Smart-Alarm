@@ -23,6 +23,8 @@
 #include <lwip/netdb.h>
 
 #include "wifi_include.h"
+#include "ssd1306.h"
+#include "font8x8_basic.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
@@ -60,9 +62,8 @@ extern httpd_uri_t input_post_uri;
 extern httpd_uri_t delete_uri;
 extern httpd_uri_t add_uri;
 
-
 extern char main_resp[];
-extern int led_state;
-extern char Web_state[];
+
+extern SSD1306_t dev; // oled device address global variable from main
 
 #endif

@@ -110,8 +110,6 @@ char main_resp[] = "<!DOCTYPE html>\
 static const char *TAG = "Server"; // TAG for debug
 int led_state = 0;
 
-char Web_state[] = "Main page";
-
 /* An HTTP GET handler */
 esp_err_t send_web_page(httpd_req_t *req)
 {
@@ -124,6 +122,9 @@ esp_err_t send_web_page(httpd_req_t *req)
 
 esp_err_t Web_main_handler(httpd_req_t *req)
 {
+    oled_printf(&dev, 4, "5 UI Home");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     return send_web_page(req);
 }
 
@@ -182,6 +183,7 @@ esp_err_t delete_post_handler(httpd_req_t *req) {
 
     // Get the id from the http request
     httpd_req_get_url_query_str(req, id, ID_LENGTH);
+
     // Find the position of the id in the main_resp[] HTML string
     id_pos = strstr(main_resp, id);
     ESP_LOGI(TAG, "%s", id);
@@ -263,6 +265,9 @@ httpd_handle_t setup_server(void)
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
 
+    oled_printf(&dev, 5, "6 SERVER Started");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     /* Set up the HTTP server */
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
     if (httpd_start(&server, &config) == ESP_OK)
@@ -283,6 +288,9 @@ httpd_handle_t setup_server(void)
 /* Stop the HTTP server */
 void stop_webserver(httpd_handle_t server)
 {
+    oled_printf(&dev, 5, "6 SERVER Stopped");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     /* Stop the HTTP server */
     httpd_stop(server);
 }
@@ -290,6 +298,9 @@ void stop_webserver(httpd_handle_t server)
 /* Restart the HTTP server with a new task */
 void restart_webserver(httpd_handle_t server)
 {
+    oled_printf(&dev, 5, "6 SERVER Restarted");
+    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+
     /* Stop the HTTP server */
     stop_webserver(server);
     /* Start the HTTP server */
