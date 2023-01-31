@@ -30,10 +30,7 @@
 #define WIFI_MAX_TRIES 10
 #define WIFI_AUTHORIZATION_MODE_THRESHOLD  WIFI_AUTH_OPEN //The weakest authmode allowed of the AP
 
-#define LED_GPIO 2
-
 /* function prototypes */
-void setup_led(void);
 void setup_nvs(void);
 
 #if MD

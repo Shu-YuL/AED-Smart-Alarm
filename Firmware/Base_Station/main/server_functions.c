@@ -1,19 +1,16 @@
 #include "server_include.h"
 
-/* structure for input data */
-typedef struct
-{
-    char mac[INPUT_LENGTH];
-    char location[INPUT_LENGTH];
-} input_t;
-
-static input_t inputs[MAX_INPUTS];
-static int num_inputs = 0;
-
-char main_resp[] = "<!DOCTYPE html>\
+/* Arrays for input data */
+char mac_array[100][MAC_LENGTH];
+char building_array[100][BUD_LENGTH];
+char floor_array[100][FR_LENGTH];
+/* Counter for number of paired devices */
+int num_rows = 0;
+/* Default HTML */
+const char main_temp[] = "<!DOCTYPE html>\
 <html>\
 <title>AED Smart Alarm web server HTML</title>\
-<!-- Created by Shu-Yu Lin 2022 Rev 1.0 -->\
+<!-- Created by Shu-Yu Lin 2022 Rev 0.2 -->\
 <head>\
     <style>\
         table {\
@@ -59,11 +56,15 @@ char main_resp[] = "<!DOCTYPE html>\
         <table id=\"d11\">\
             <tr>\
                 <th>MAC address</th>\
-                <td><input type=\"text\" id=\"MAC\" name=\"MAC\" value=\"ex: xxxxxxxxxxxx\" /></td>\
+                <td><input type=\"text\" id=\"MAC\" name=\"MAC\" value=\"xxxxxxxxxxxx\" /></td>\
             </tr>\
             <tr>\
-                <th>Location</th>\
-                <td><input type=\"text\" id=\"location\" name=\"location\" value=\"ex: ETLC 4th\" /></td>\
+                <th>Building</th>\
+                <td><input type=\"text\" id=\"building\" name=\"building\" value=\"ETLC\" /></td>\
+            </tr>\
+            <tr>\
+                <th>Floor</th>\
+                <td><input type=\"text\" id=\"floor\" name=\"floor\" value=\"3\" /></td>\
             </tr>\
             <tr>\
                 <td class=\'c1\'>\
@@ -93,22 +94,13 @@ char main_resp[] = "<!DOCTYPE html>\
                 </form>\
             </td>\
         </tr>\
-        <tr id=\"row_2\">\
-            <td class=\'c1\'>xxxxxxxxxxxx</td>\
-            <td class=\'c2\'>ETLC 2nd</td>\
-            <td class=\'c3\'>\
-                <form action=\"/delete\" method=\"post\">\
-                    <input type=\"hidden\" name=\"id\" value=\"row_2\">\
-                    <input type=\"submit\" value=\"Delete\">\
-                </form>\
-            </td>\
-        </tr>\
     </table>\
 </body>\
 </html>";
+/* Real HTML string holder */
+char *main_resp;
 
 static const char *TAG = "Server"; // TAG for debug
-int led_state = 0;
 
 /* An HTTP GET handler */
 esp_err_t send_web_page(httpd_req_t *req)
@@ -125,53 +117,17 @@ esp_err_t Web_main_handler(httpd_req_t *req)
     oled_printf(&dev, 4, "5 UI Home");
     vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
 
+    /* if num_rows = 0, use the default HTML file as home page */
+    if (num_rows == 0)
+    {
+        int size = strlen(main_temp);
+        main_resp = malloc(size+1 * sizeof(char));
+        strcpy(main_resp,main_temp);
+    }    
+
     return send_web_page(req);
 }
 
-/* An HTTP POST handler */
-esp_err_t input_post_handler(httpd_req_t *req)
-{
-    char buf[INPUT_LENGTH];
-    int ret, remaining = req->content_len;
-
-    if (num_inputs == MAX_INPUTS)
-    {
-        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Too many inputs");
-        return ESP_FAIL;
-    }
-
-    while (remaining > 0)
-    {
-        /* Read the data for the request */
-        if ((ret = httpd_req_recv(req, buf, MIN(remaining, INPUT_LENGTH))) <= 0)
-        {
-            if (ret == HTTPD_SOCK_ERR_TIMEOUT)
-            {
-                /* Retry if timeout occurred */
-                continue;
-            }
-            return ESP_FAIL;
-        }
-
-        /* Send back the same data */
-        httpd_resp_send_chunk(req, buf, ret);
-        remaining -= ret;
-
-        /* Log data received */
-        ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
-        ESP_LOGI(TAG, "%.*s", ret, buf);
-        ESP_LOGI(TAG, "====================================");
-    }
-
-    /* Store the input data in RAM */
-    sscanf(buf, "MAC=%[^&]&location=%[^&]", inputs[num_inputs].mac, inputs[num_inputs].location);
-    num_inputs++;
-
-    /* Respond with an empty chunk to signal the end of the response */
-    httpd_resp_send_chunk(req, NULL, 0);
-
-    return ESP_OK;
-}
 /* POST handler for delet row */
 esp_err_t delete_post_handler(httpd_req_t *req) {
     char id[ID_LENGTH];
@@ -206,8 +162,8 @@ esp_err_t delete_post_handler(httpd_req_t *req) {
                     <html>\
                     <!-- Created by Shu-Yu Lin 2022 Rev 1.0 -->\
                     <body>\
-                        <p>Row deleted ...</p>\
-                        <form action=\"/\" method=\"post\">\
+                        <p>Row deleted, please go back the the previous page.</p>\
+                        <form action=\"/\" method=\"get\">\
                             <input type=\"submit\" value=\"Go back\">\
                         </form>\
                     </body>\
@@ -220,12 +176,77 @@ esp_err_t delete_post_handler(httpd_req_t *req) {
 
 /* POST handler for add row*/
 esp_err_t add_post_handler(httpd_req_t *req) {
-    // char mac[MAC_LENGTH], location[LOC_LENGTH];
-    // httpd_req_get_post_param(req, "mac", mac, sizeof(mac));
-    // httpd_req_get_post_param(req, "location", location, sizeof(location));
-    // Add the new row to the data table
-    // ... code ...
-    httpd_resp_send(req, "Row added", -1);
+    char row_new[1000];
+    char mac[MAC_LENGTH], building[BUD_LENGTH], floor[FR_LENGTH];
+    char content[100];
+
+    size_t recv_size = MIN(req->content_len, sizeof(content));
+    httpd_req_recv(req,content,recv_size);
+    /* uses sscanf to parse the string and store the desired values in mac and location */
+    sscanf(content, "MAC=%[^&]&building=%[^&]&floor=%[^&]", mac, building, floor);
+    // printf("Data send: %.*s\n", recv_size, content);
+    printf("MAC: %s\n", mac);
+    printf("Building: %s\n", building);
+    printf("Floor: %s\n", floor);
+    
+    /* store input data to data arrays */
+    strcpy(mac_array[num_rows], mac);
+    strcpy(building_array[num_rows], building);
+    strcpy(floor_array[num_rows], floor);
+    // printf("Array test: %s\t%s %s\n", mac_array[num_rows],building_array[num_rows],floor_array[num_rows]);
+
+    sprintf(row_new, "<tr id=\"row_%d\">\
+            <td class='c1'>%s</td>\
+            <td class='c2'>%s %s</td>\
+            <td class='c3'>\
+                <form action='/delete' method='post'>\
+                    <input type='hidden' name='id' value='row_2'>\
+                    <input type='submit' value='Delete'>\
+                </form>\
+            </td>\
+        </tr>", num_rows++, mac, building,floor);
+    
+    // Find the location of the search string
+    char *insert_point = strstr(main_resp, "</table></body>");
+
+    // Calculate the length of the original string and new string
+    int main_len = strlen(main_resp);
+    int new_len = strlen(row_new);
+
+    // Allocate memory for the final string
+    char *final_string = malloc(main_len + new_len + 1);
+
+    // Copy the first part of the original string into the final string
+    strncpy(final_string, main_resp, insert_point - main_resp);
+
+    // Copy the new string into the final string
+    strcpy(final_string + (insert_point - main_resp), row_new);
+
+    // Copy the rest of the original string into the final string
+    strcpy(final_string + (insert_point - main_resp) + new_len, insert_point);
+
+    new_len = strlen(final_string);
+    /* reallocate memory for the current version of HTML */
+    main_resp = realloc(main_resp, (new_len+1)*sizeof(char));
+    strcpy(main_resp, final_string);
+
+    // printf("main_resp:\n%s\n", main_resp);
+    
+    /* release memory for final_string */
+    free(final_string);
+
+    const char resp[] = "<!DOCTYPE html>\
+<html>\
+<!-- Created by Shu-Yu Lin 2022 Rev 0.2 -->\
+<body>\
+    <p>Data was sent, please go back the the previous page.</p>\
+    <form action=\"/\" method=\"get\">\
+        <input type=\"submit\" value=\"Go back\">\
+    </form>\
+</body>\
+</html>";
+    httpd_resp_send(req,resp,HTTPD_RESP_USE_STRLEN);
+
     return ESP_OK;
 }
 
@@ -234,14 +255,6 @@ httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
     .handler = Web_main_handler,
-    .user_ctx = NULL
-};
-
-/* Use the URI "/input" to receive POST data and store it in RAM */
-httpd_uri_t input_post_uri = {
-    .uri = "/input",
-    .method = HTTP_POST,
-    .handler = input_post_handler,
     .user_ctx = NULL
 };
 
@@ -274,7 +287,6 @@ httpd_handle_t setup_server(void)
     {
         /* Set URI handlers */
         httpd_register_uri_handler(server, &uri_get);
-        httpd_register_uri_handler(server, &input_post_uri);
         httpd_register_uri_handler(server, &delete_uri);
         httpd_register_uri_handler(server, &add_uri);
         
@@ -282,27 +294,31 @@ httpd_handle_t setup_server(void)
     }
 
     ESP_LOGI(TAG, "Error starting server!");
+    ssd1306_clear_screen(&dev, false);
+    oled_printf(&dev, 1, "Error starting");
+    oled_printf(&dev, 2, "Server");
+    oled_printf(&dev, 4, "Check hardware");
     return NULL;
 }
 
-/* Stop the HTTP server */
-void stop_webserver(httpd_handle_t server)
-{
-    oled_printf(&dev, 5, "6 SERVER Stopped");
-    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+// /* Stop the HTTP server */
+// void stop_webserver(httpd_handle_t server)
+// {
+//     oled_printf(&dev, 5, "6 SERVER Stopped");
+//     vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
 
-    /* Stop the HTTP server */
-    httpd_stop(server);
-}
+//     /* Stop the HTTP server */
+//     httpd_stop(server);
+// }
 
-/* Restart the HTTP server with a new task */
-void restart_webserver(httpd_handle_t server)
-{
-    oled_printf(&dev, 5, "6 SERVER Restarted");
-    vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
+// /* Restart the HTTP server with a new task */
+// void restart_webserver(httpd_handle_t server)
+// {
+//     oled_printf(&dev, 5, "6 SERVER Restarted");
+//     vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
 
-    /* Stop the HTTP server */
-    stop_webserver(server);
-    /* Start the HTTP server */
-    server = setup_server();
-}
+//     /* Stop the HTTP server */
+//     stop_webserver(server);
+//     /* Start the HTTP server */
+//     server = setup_server();
+// }
