@@ -3,11 +3,6 @@
 static const char *TAG = "WIFI";
 
 /***** WIFI Statics *****/
-void setup_led(void) {
-    ESP_LOGI(TAG, "LED on GPIO %d set to indicate successful Wi-Fi connection", LED_GPIO);
-    gpio_reset_pin(LED_GPIO);
-    gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
-}
 
 void setup_nvs(void) {
     //Initializes NVS

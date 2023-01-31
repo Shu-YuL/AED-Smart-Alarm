@@ -32,6 +32,10 @@ static void event_handler(void *arg, esp_event_base_t event_base,
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
         ESP_LOGI(TAG, "connect to the AP fail");
+        ssd1306_clear_screen(&dev, false);
+        oled_printf(&dev, 1, "Failed to");
+        oled_printf(&dev, 2, "connect to AP");
+        oled_printf(&dev, 4, "Check hardware");
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
@@ -102,10 +106,17 @@ void connect_wifi(void)
     {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
                  EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+        ssd1306_clear_screen(&dev, false);
+        oled_printf(&dev, 1, "Failed to");
+        oled_printf(&dev, 2, "connect to WIFI");
+        oled_printf(&dev, 4, "Check hardware");
     }
     else
     {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
+        ssd1306_clear_screen(&dev, false);
+        oled_printf(&dev, 1, "UNEXPECTED EVENT");
+        oled_printf(&dev, 3, "Check hardware");
     }
     vEventGroupDelete(s_wifi_event_group);
 }
@@ -152,21 +163,4 @@ void app_main(void)
 
     oled_printf(&dev, 3, "4 SERVER MAIN");
     vTaskDelay(1000/ portTICK_PERIOD_MS); // delay 1s
-
-    // /* Start the HTTP server */
-    // httpd_handle_t server = setup_server();
-    // /* Wait for WiFi connection */
-    // xEventGroupWaitBits(s_wifi_event_group, WIFI_CONNECTED_BIT,
-    //                     false, true, portMAX_DELAY);
-    // /* Restart the HTTP server when the WiFi connection is lost */
-    // while (1)
-    // {
-    //     if ((xEventGroupGetBits(s_wifi_event_group) & WIFI_CONNECTED_BIT) == 0)
-    //     {
-    //         ESP_LOGI(TAG, "WiFi Disconnected, restarting server");
-    //         restart_webserver(server);
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(1000)); // delay 1 sec before checking again
-
-    // }
 }

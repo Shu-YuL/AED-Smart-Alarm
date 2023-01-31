@@ -28,6 +28,10 @@
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+#define MAC_LENGTH 18
+#define BUD_LENGTH 6
+#define FR_LENGTH 2
+
 #define MAX_INPUTS 10
 #define INPUT_LENGTH 50
 #define ID_LENGTH 50
@@ -45,24 +49,17 @@
 #define WIFI_FAIL_BIT BIT1
 
 /* function prototypes */
-esp_err_t send_web_page(httpd_req_t *req);
-
-esp_err_t Web_main_handler(httpd_req_t *req);
-esp_err_t input_post_handler(httpd_req_t *req);
-esp_err_t delete_post_handler(httpd_req_t *req);
-esp_err_t add_post_handler(httpd_req_t *req);
-
 httpd_handle_t setup_server(void);
-void stop_webserver(httpd_handle_t server);
-void restart_webserver(httpd_handle_t server);
+// void stop_webserver(httpd_handle_t server);
+// void restart_webserver(httpd_handle_t server);
 
 /* Global variables */
-extern httpd_uri_t uri_get;
-extern httpd_uri_t input_post_uri;
-extern httpd_uri_t delete_uri;
-extern httpd_uri_t add_uri;
+extern char mac_array[100][MAC_LENGTH];
+extern char building_array[100][BUD_LENGTH];
+extern char floor_array[100][FR_LENGTH];
 
-extern char main_resp[];
+extern const char main_temp[];
+extern int num_rows;
 
 extern SSD1306_t dev; // oled device address global variable from main
 
