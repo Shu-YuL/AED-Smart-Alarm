@@ -23,7 +23,7 @@ Our project consists of three main components. The first component is the alarm,
 - An 2004 LCD display will be mounted on the base station and connected to the MCU via the I²C interface. 
 - An LED bulb will be used and controlled via the MCU's digital output signal. Similarly, a piezoelectric buzzer will also be used and controlled via PWM signals from the MCU.
 - The base station will be connected to campus Wifi and pull data from the Google Sheet every 10 seconds through sending an HTTP GET request. It will receive an empty message when no monitoring device is triggered. If any of the monitoring devices are triggered, it will receive a string showing the location of this monitoring device and then activates buzzer, LED, and also displays alert message on the LCD display.
-- Users can interact with the base station with an onboard pushbutton. One pushbutton labeled "Clear" is used to dismiss an alert event.
+- Users can interact with the base station with onboard pushbuttons. One pushbutton labeled "Clear" is used to dismiss an alert event.
 
 The project firmware is developed using ESP-IDF. The Google Sheet is managed using Google Apps Script.
 
