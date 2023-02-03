@@ -1,4 +1,4 @@
- var sheet_id = "1vdIEF1UmQx2RttqbzoxveTfbGcOXLkPOXro1gw-HovA";
+var sheet_id = "1vdIEF1UmQx2RttqbzoxveTfbGcOXLkPOXro1gw-HovA";
 var ss = SpreadsheetApp.openById(sheet_id);
 var paired_sheet = ss.getSheetByName("Paired_devices");
 var triggered_sheet = ss.getSheetByName("Triggered_devices");
