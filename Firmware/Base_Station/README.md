@@ -21,12 +21,16 @@ Remember to enter your WiFi **SSID** and **Password** in **wifi_include.h**
 (ESP32-DevkitC-V4)
 ### LCD
 PIN 21 - SDA
+
 PIN 22 - SCL
+
 5V     - VCC
+
 GND    - GND
 
 ### Clear Button
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
 Lead 1 - PIN 19 INPUT, PULLDOWN, POS EDGE TRIGGER
+
 Lead 2 - 3.3V
