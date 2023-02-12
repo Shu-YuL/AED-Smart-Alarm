@@ -27,5 +27,6 @@ GND    - GND
 
 ### Clear Button
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
+
 Lead 1 - PIN 19 INPUT, PULLDOWN, POS EDGE TRIGGER
 Lead 2 - 3.3V
