@@ -1,9 +1,6 @@
 #ifndef WIFI_INCLUDE_H
 #define WIFI_INCLUDE_H
 
-#define MD 0 // current device is not a monitoring device
-#define BS 1 // current device is a base station
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,12 +27,11 @@
 #define WIFI_MAX_TRIES 10
 #define WIFI_AUTHORIZATION_MODE_THRESHOLD  WIFI_AUTH_OPEN //The weakest authmode allowed of the AP
 
+#define WIFI_CONNECTED_BIT BIT0
+#define WIFI_FAIL_BIT BIT1
+
 /* function prototypes */
 void setup_nvs(void);
-
-#if MD
-void setup_wifi(void);
-esp_err_t connect_wifi(void);
-#endif
+void connect_wifi(void);
 
 #endif

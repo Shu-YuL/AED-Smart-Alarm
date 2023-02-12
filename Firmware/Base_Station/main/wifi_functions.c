@@ -2,8 +2,6 @@
 
 static const char *TAG = "WIFI";
 
-/***** WIFI Statics *****/
-
 void setup_nvs(void) {
     //Initializes NVS
     esp_err_t ret = nvs_flash_init();
@@ -14,64 +12,105 @@ void setup_nvs(void) {
     ESP_ERROR_CHECK(ret);
 }
 
-#if MD
-void setup_wifi(void) {
-    //to setup ESP32 as a station (STA) to a simple non-WPA2 access point (AP) like home Wi-Fi 
+/* FreeRTOS event group to signal when wifi is connected*/
+static EventGroupHandle_t s_wifi_event_group;
 
-    wifi_init_config_t init_config = WIFI_INIT_CONFIG_DEFAULT(); 
-    //ESP_ERROR_CHECK() checks the esp_err_t return value of API functions, and prints error message if function doesn't return ESP_OK and aborts
-    //to avoid aborting, use ESP_ERROR_CHECK_WITHOUT_ABORT()
-    //see Espressif's Error Handling Doc: "Many ESP-IDF examples use ESP_ERROR_CHECK to handle errors from various APIs. This is not the best practice for applications, and is done to make example code more concise." May be simpler to just check return values manually
-    ESP_ERROR_CHECK(esp_wifi_init(&init_config)); //must be called first
-    
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)); //set ESP32 to be a station (STA); to set as AP, use WIFI_MODE_AP
+static int s_retry_num = 0;
 
-    //wifi_config_t wifi_configuration;
-    //wifi_configuration.sta = {.ssid = WIFI_SSID , .password = WIFI_PASSWORD, .threshold.authmode = WIFI_AUTHORIZATION_MODE_THRESHOLD, .sae_pwe_h2e = WPA3_SAE_PWE_BOTH,};
+static void event_handler(void *arg, esp_event_base_t event_base,
+                          int32_t event_id, void *event_data)
+{
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
+    {
+        esp_wifi_connect();
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+    {
+        if (s_retry_num < WIFI_MAX_TRIES)
+        {
+            esp_wifi_connect();
+            s_retry_num++;
+            ESP_LOGI(TAG, "retry to connect to the AP");
+        }
+        else
+        {
+            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
+        }
+        ESP_LOGI(TAG, "connect to the AP fail");
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
+    {
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+        ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+        s_retry_num = 0;
+        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+    }
+}
 
+void connect_wifi(void)
+{
+    s_wifi_event_group = xEventGroupCreate();
 
-    wifi_config_t wifi_configuration = {
-        .sta = {.ssid = WIFI_SSID, .password = WIFI_PASSWORD,
+    ESP_ERROR_CHECK(esp_netif_init());
+
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_sta();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &event_handler,
+                                                        NULL,
+                                                        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &event_handler,
+                                                        NULL,
+                                                        &instance_got_ip));
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = WIFI_SSID,
+            .password = WIFI_PASSWORD,
             /* Setting a password implies station will connect to all security modes including WEP/WPA.
              * However these modes are deprecated and not advisable to be used. Incase your Access point
              * doesn't support WPA2, these mode can be enabled by commenting below line */
-	     .threshold.authmode = WIFI_AUTH_OPEN, .sae_pwe_h2e = WPA3_SAE_PWE_BOTH,
-         },
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+        },
     };
-
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_configuration));
-
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
-    
-    return;
+
+    ESP_LOGI(TAG, "wifi_init_sta finished.");
+
+    /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
+     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+                                           WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+                                           pdFALSE,
+                                           pdFALSE,
+                                           portMAX_DELAY);
+
+    /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
+     * happened. */
+    if (bits & WIFI_CONNECTED_BIT)
+    {
+        ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
+                 WIFI_SSID, WIFI_PASSWORD);
+    }
+    else if (bits & WIFI_FAIL_BIT)
+    {
+        ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
+                 WIFI_SSID, WIFI_PASSWORD);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "UNEXPECTED EVENT");
+    }
+    vEventGroupDelete(s_wifi_event_group);
 }
-
-esp_err_t connect_wifi(void) {
-    //attempts to connect ESP32 to a WiFi Access Point specified by setup_wifi()
-    
-    esp_err_t wifi_connection_status = !ESP_OK;
-    uint8_t tries = 0;
-
-    while (wifi_connection_status != ESP_OK && tries < WIFI_MAX_TRIES ) {  //attempt to connect to AP until connection established, or max attempts reached
-        wifi_connection_status = esp_wifi_connect();
-        //vTaskDelay(2000 / portTICK_PERIOD_MS); //wait 2s before retrying to connect to AP
-        tries++;
-    }
-
-
-    if (wifi_connection_status == ESP_OK) {
-        ESP_LOGI(TAG, "WiFi Successfully Connected!");
-        wifi_ap_record_t ap_info;
-        esp_wifi_sta_get_ap_info(&ap_info);
-        ESP_LOGI(TAG, "__________________________________________");
-        ESP_LOGI(TAG, "AP SSID: %s, AP MAC Address: %s, rssi: %d ", ap_info.ssid, ap_info.bssid, ap_info.rssi);
-        gpio_set_level(LED_GPIO, 1);
-    }
-    else {ESP_LOGI(TAG, "WiFi Failed to Connected");
-    gpio_set_level(LED_GPIO, 0);
-    }
-    
-    return wifi_connection_status;
-}
-
-#endif
