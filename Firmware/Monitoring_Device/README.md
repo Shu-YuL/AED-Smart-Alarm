@@ -1,32 +1,27 @@
-# _Sample project_
+# Monitoring Device
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## Development Progress
+### What's ready
+- Wifi
+- HTTP Client
+  - Door switch (currently using a button to simulate triggering behavioor) GPIO interrupt (Post device MAC addr to Google Sheet)
+### What's left
+- Auto sleep after complete a whole process
+- Wake up on Door switch trigger
+- Optimal power saving
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+## How to use
+Pull the **Monitoring_Device** folder to your local folder and copy and paste these files to your local project folder and build from there.
 
+Remember to enter your WiFi **SSID** and **Password** in **menuconfig** 
 
+VS Code: CTRL+SHIFT+P -> search "ESP-IDF: SDK Configuration Editor" -> look for "Example Configuration" -> type in SSID and Password -> Save -> Build & Flash)
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+**Only pushes the same files back to the Repository** as other folders are associated with your own PC enviornment (ex: your ESP-IDF path) which is different from other perople's enviornment.
 
-## Example folder contents
-
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+## Pinout
+(ESP32-DevkitC-V4)
+### Clear Button (Currently PIN 18)
+![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
+Lead 1 - PIN 18 INPUT, PULLDOWN, POS EDGE TRIGGER
+Lead 2 - 3.3V
