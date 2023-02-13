@@ -25,4 +25,5 @@ VS Code: CTRL+SHIFT+P -> search "ESP-IDF: SDK Configuration Editor" -> look for 
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
 Lead 1 - PIN 18 INPUT, PULLDOWN, POS EDGE TRIGGER
+
 Lead 2 - 3.3V
