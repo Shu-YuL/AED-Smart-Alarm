@@ -7,7 +7,7 @@ Our project aims to improve upon the current AED monitoring system used by the U
 
 ## Method of Project Approach
 
-Our project consists of three main components. The first component is the alarm, a monitoring device installed inside each AED cabinet and used to detect if the cabinet door opens. The second component is a base station unit installed inside the UAPS office used notify people in the office if any of the alarm monitoring devices inside the AED cabinet are triggered. The third component is a Google Apps Script managed Google Sheets, it processes HTTP requests sent from the base station and the monitoring devices and sends an email to UAPS if any of the monitoring devices are triggered. 
+Our project consists of three main components. The first component is the alarm, a monitoring device installed inside each AED cabinet and used to detect if the cabinet door opens. The second component is a base station unit installed inside the UAPS office used notify people in the office if any of the alarm monitoring devices inside the AED cabinet are triggered. The third component is a Google Apps Script managed Google Sheets, it processes HTTP requests sent from the base station and the monitoring devices and sends **an email, along	with Telegram and Discord channel announcement message** to UAPS if any of the monitoring devices are triggered. 
 
 ### Monitoring Device
 - Every monitoring device is powered by a 9V battery. 
