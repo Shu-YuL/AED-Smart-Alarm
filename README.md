@@ -1,5 +1,10 @@
-# AED Smart Alarm 
---updated Feb 3, 2023 by Shu-Yu Lin
+# AED Smart Alarm
+
+--updated Feb 14, 2023 by Shu-Yu Lin
+
+Alarm messaging app channel links:
+[Telegram](https://t.me/+YDv_uXch1lFhM2Mx)
+[Discord](https://discord.gg/8R3kqmZn9D)
 
 ## Introduction
 
@@ -10,6 +15,7 @@ Our project aims to improve upon the current AED monitoring system used by the U
 Our project consists of three main components. The first component is the alarm, a monitoring device installed inside each AED cabinet and used to detect if the cabinet door opens. The second component is a base station unit installed inside the UAPS office used notify people in the office if any of the alarm monitoring devices inside the AED cabinet are triggered. The third component is a Google Apps Script managed Google Sheets, it processes HTTP requests sent from the base station and the monitoring devices and sends **an email, along	with Telegram and Discord channel announcement message** to UAPS if any of the monitoring devices are triggered. 
 
 ### Monitoring Device
+
 - Every monitoring device is powered by a 9V battery. 
 - A door switch sensor is used to detect any motion of the cabinet door. 
 - The activation of the switch sends a digital signal to wake up and trigger the device. 
@@ -18,6 +24,7 @@ Our project consists of three main components. The first component is the alarm,
 - The monitoring device will go back to sleep after it receives an acknowledgement flag from the Google Sheet.
 
 ### Base Station
+
 - The base station is powered by a wall outlet power supply that will supply 5V. 
 - The MCU used for the base station is ESP32-WROOM-32E.
 - An 2004 LCD display is mounted on the base station and connected to the MCU via the I²C interface. 
@@ -26,9 +33,11 @@ Our project consists of three main components. The first component is the alarm,
 - Users can interact with the base station with onboard pushbuttons. One pushbutton labeled "Clear" is used to dismiss an alert event.
 
 ### Google Sheet
+
 - ...
 
 The project firmware is developed using ESP-IDF. The Google Sheet is managed using Google Apps Script.
 
 ## Usage of this Repository
+
 This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system. It includes details of the components used, such as the microcontroller, camera module, OLED display, LED bulb and piezoelectric buzzer.
