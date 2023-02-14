@@ -1,3 +1,7 @@
+/* Include Guard */
+#ifndef BASE_STATION_H
+#define BASE_STATION_H
+
 #include <stdio.h>
 #include <string.h>
 #include "driver/gpio.h"
@@ -28,6 +32,4 @@ void Clear_button(void);
 void LCD_Alert(void);
 void LCD_Secured(void);
 
-/* global variables */
-extern char Location_str[LOC_MAX_LEN];
-extern bool Clear_flag;
+#endif

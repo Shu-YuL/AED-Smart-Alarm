@@ -1,3 +1,7 @@
+/* Include Guard */
+#ifndef MONITORING_DEVICE_H
+#define MONITORING_DEVICE_H
+
 /* Definitions */
 /* Change the value below to change external interrupt Pin */
 #define Trigger_PIN 18
@@ -31,3 +35,5 @@ void get_MAC(void);
 // void send_whatup_message(void);
 void interrupt_task(void *arg);
 void interrupt_init(void);
+
+#endif
