@@ -3,7 +3,9 @@
 --updated Feb 14, 2023 by Shu-Yu Lin
 
 Alarm messaging app channel links:
+
 [Telegram](https://t.me/+YDv_uXch1lFhM2Mx)
+
 [Discord](https://discord.gg/8R3kqmZn9D)
 
 ## Introduction
