@@ -46,4 +46,4 @@ The project firmware is developed in C language using ESP-IDF. The Google Sheet 
 
 ## Usage of this Repository
 
-This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system. It includes details of the components used, such as the microcontroller, camera module, OLED display, LED bulb and piezoelectric buzzer.
+This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system. It includes details of the components used, such as the microcontroller, door switch, LCD display, LED bulb and piezoelectric buzzer.
