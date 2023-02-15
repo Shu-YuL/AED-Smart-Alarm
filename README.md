@@ -36,9 +36,13 @@ Our project consists of three main components. The first component is the alarm,
 
 ### Google Sheet
 
-- ...
+- Serves as a Web Server and online User Interface for the project
+- Manages HTTP Requests and data sent from both the Base Station and the Monitoring Devices
+- Provides an in-services device list that can be managed by the user
+- Provides an Event Log sheet that records all triggering events along with triggered date and time of each event
+- Sends Email, and make announcements to Telegram and Discord channel when an event is triggered
 
-The project firmware is developed using ESP-IDF. The Google Sheet is managed using Google Apps Script.
+The project firmware is developed in C language using ESP-IDF. The Google Sheet is managed using Google Apps Script.
 
 ## Usage of this Repository
 
