@@ -18,8 +18,8 @@
 #include "esp_netif.h"
 
 #define WIFI_MODE 0
-#define WIFI_SSID "TELUS0357-2.4G" //enter network ssid
-#define WIFI_PASSWORD "8w2b9cpw33" //enter network password
+#define WIFI_SSID "" //enter network ssid
+#define WIFI_PASSWORD "" //enter network password
 
 #define WIFI_EAP_METHOD 0 //following is to be used once working WPA2 example is integrated 
 #define WIFI_EAP_ID 0

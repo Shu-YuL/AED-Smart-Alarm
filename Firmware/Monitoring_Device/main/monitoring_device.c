@@ -83,9 +83,8 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     case HTTP_EVENT_ON_DATA:
         if (evt->data_len > HTTP_RESPONSE_LEN) break;
         sprintf(http_response,"%.*s", evt->data_len, (char *)evt->data);
-        ESP_LOGI(TAG, "%s",http_response);
-
-        // LCD_Alert(); // Event happened, LCD print location
+        ESP_LOGI(TAG, "resp = %s",http_response);
+        ESP_LOGI(TAG, "len = %d", evt->data_len);
 
         break;
 
@@ -99,29 +98,36 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 void myMACto_GS(void *parameters)
 {
     char *device_MAC = (char *)parameters;
-    /* Declaring variable that contains the URL of CallmeBot AP */
-    char base_GS_url[] = HTTP_POST_URL;
+    char base_GS_url[] = HTTP_GET_URL;
+    int retry = 0;
 
-    char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of callmebot_url */
+    char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of url */
     sprintf(BSURL, base_GS_url, device_MAC);
-    ESP_LOGI(TAG, "POST request sent, URL = %s", BSURL);
+    ESP_LOGI(TAG, "GET request sent, URL = %s", BSURL);
     esp_http_client_config_t config = {
         .url = BSURL,
-        .method = HTTP_METHOD_POST,
+        .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};
 
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
-    //   ******** check status not working
-    if (strcmp(http_response,"Paired") == 1 || strcmp(http_response,"Accepted") == 1)
+    /* check http response */
+    if (strcmp(http_response,"Paired") == 0 || strcmp(http_response,"Accepted") == 0)
     {
-        ESP_LOGI(TAG,"HTTP POST Request Successed. Response: %s",http_response);
+        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
     }
     else
     {
-        ESP_LOGI(TAG,"HTTP POST Request Failed");
+        ESP_LOGI(TAG,"HTTP GET Request Failed. Response: %s",http_response);
+        if (retry <= 5)
+        {
+            /* retry http request */
+            esp_http_client_perform(client);
+            retry++;
+        }
+        else ESP_LOGI(TAG,"Reached Maximum retry");
     }
 
     esp_http_client_cleanup(client);

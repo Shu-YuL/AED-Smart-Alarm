@@ -10,7 +10,7 @@
 #define HTTP_RESPONSE_LEN 10
 #define ESP_INR_FLAG_DEFAULT 0
 
-#define HTTP_POST_URL "https://script.google.com/macros/s/AKfycbygpLjOkEHO2bdSAkp9unIaEdfstvWOnSppsODCJhFMDdWzxixHMzeWGJq5mLeRyz1ttA/exec?MAC=%s"
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwa8s2pwkx1beC9xYe6XyZ1gZv2qkxX7VpWulMRrA_uCpPtcRvtn52d30e_sjhFCr88Zg/exec?MAC=%s"
 
 /* Includes */
 #include <stdio.h>

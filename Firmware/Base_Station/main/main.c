@@ -6,10 +6,10 @@ static const char *TAG = "Main";
 
 void app_main(void)
 {
-    LCD_init(LCD_ADDR, SDA_PIN, SCL_PIN, LCD_COLS, LCD_ROWS); /* Initializing LCD parameters */
-    LCD_home(); /* This function is called before we want to output anything to the screen */
-    LCD_clearScreen(); /* This function is called to clear the current screen */
-    LCD_Secured();
+    // LCD_init(LCD_ADDR, SDA_PIN, SCL_PIN, LCD_COLS, LCD_ROWS); /* Initializing LCD parameters */
+    // LCD_home(); /* This function is called before we want to output anything to the screen */
+    // LCD_clearScreen(); /* This function is called to clear the current screen */
+    // LCD_Secured();
 
     setup_nvs();
     connect_wifi();

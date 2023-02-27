@@ -22,7 +22,7 @@ Our project consists of three main components. The first component is the alarm,
 - A door switch sensor is used to detect any motion of the cabinet door. 
 - The activation of the switch sends a digital signal to wake up and trigger the device. 
 - The development board used is ESP32-DevKitC V4. 
-- When the MCU is active, it will try to connect to campus WiFi and sends its MAC address to the Google Sheet through an HTTP POST request.
+- When the MCU is active, it will try to connect to campus WiFi and sends its MAC address to the Google Sheet through an HTTP GET request.
 - The monitoring device will go back to sleep after it receives an acknowledgement flag from the Google Sheet.
 
 ### Base Station
