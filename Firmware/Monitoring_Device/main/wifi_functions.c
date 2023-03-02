@@ -2,6 +2,8 @@
 
 static const char *TAG = "WIFI";
 
+#ifdef HOME
+
 void setup_nvs(void) {
     //Initializes NVS
     esp_err_t ret = nvs_flash_init();
@@ -114,3 +116,5 @@ void connect_wifi(void)
     }
     vEventGroupDelete(s_wifi_event_group);
 }
+
+#endif

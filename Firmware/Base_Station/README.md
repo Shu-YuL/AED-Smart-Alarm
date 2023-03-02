@@ -1,5 +1,7 @@
 # Base Station
 
+-- updated March 1, 2023 by Shu-Yu Lin
+
 ## Development Progress
 
 ### What's ready
@@ -8,17 +10,19 @@
 - HTTP Client
   - 5 sec recurring timer interrupt (read data from Google Sheet)
   - Clear button GPIO interrupt (remove row 2 in *Triggered_devices* sheet, same as clearing an event)
+- LCD
 
 ### What's left
 
-- LCD (debug)
 - Peripheral GPIO features (LED, buzzer, etc.)
 
 ## How to use
 
-Pull the **Base_Station** folder to your local folder and copy and paste these files to your local project folder and build from there.
+Pull the **```Base_Station```** folder to your local folder and copy and paste these files to your local project folder and build from there.
 
-Remember to enter your WiFi **SSID** and **Password** in **wifi_include.h**
+In **```wifi_include.h```**, the first line ``` #define ... ```, please enter ``` HOME ``` if you are off campus, ``` UWS ``` if you are on campus.
+
+Remember to enter your WiFi **```SSID```** and **```Password```** in **```wifi_include.h```** for home internet. Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for campus internet.
 
 **Only pushes the same files back to the Repository** as other folders are associated with your own PC enviornment (ex: your ESP-IDF path) which is different from other perople's enviornment.
 

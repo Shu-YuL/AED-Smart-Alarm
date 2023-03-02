@@ -8,8 +8,6 @@
 #include <esp_log.h>
 #include <string.h>
 
-#include "HD44780.h"
-
 // LCD module defines
 #define LCD_LINEONE             0x00        // start of line 1
 #define LCD_LINETWO             0x40        // start of line 2
@@ -148,7 +146,6 @@ static void LCD_writeNibble(uint8_t nibble, uint8_t mode)
     ESP_ERROR_CHECK(i2c_master_write_byte(cmd, data, 1));
     ESP_ERROR_CHECK(i2c_master_stop(cmd));
     ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_PERIOD_MS));
-    
     i2c_cmd_link_delete(cmd);   
 
     LCD_pulseEnable(data);                                              // Clock data into LCD
@@ -179,31 +176,6 @@ static void LCD_pulseEnable(uint8_t data)
     ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_PERIOD_MS));
     i2c_cmd_link_delete(cmd);
     ets_delay_us(500);
-}
-
-void LCD_DemoTask(void* param)
-{
-    char txtBuf[8];
-    while (true) {
-        LCD_home();
-        LCD_clearScreen();
-        LCD_writeStr("*** Alarm Alert ***");
-        LCD_setCursor(0, 1);
-        LCD_writeStr("Module: X");
-        LCD_setCursor(0, 2);
-        LCD_writeStr("Location: ETLC 2F");
-        LCD_setCursor(0, 3);
-        LCD_writeStr("Battery: High");
-        LCD_setCursor(16, 3);
-        LCD_writeStr("T: ");
-        for (int i = 10; i >= 0; i--) {
-            LCD_setCursor(18, 3);
-            sprintf(txtBuf, "%02d", i);
-            printf(txtBuf);
-            LCD_writeStr(txtBuf);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-        }
-    }
 }
 
 /* This function will print any character to the LCD display. The first argument is the x position,

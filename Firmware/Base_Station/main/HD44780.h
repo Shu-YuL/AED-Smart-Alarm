@@ -8,6 +8,7 @@
 #include <freertos/task.h>
 #include <stdio.h>
 #include "sdkconfig.h"
+#include "HD44780.h"
 
 /* Definitions */
 #define LCD_ADDR 0x27

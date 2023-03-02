@@ -15,10 +15,10 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     {
     case HTTP_EVENT_ON_DATA:
         if (evt->data_len > LOC_MAX_LEN) break;
-        sprintf(Location_str,"Location: %.*s", evt->data_len, (char *)evt->data);
-        ESP_LOGI(TAG, "%s",Location_str);
+        sprintf(Location_str,"%.*s", evt->data_len, (char *)evt->data);
+        ESP_LOGI(TAG, "Location: %s",Location_str);
 
-        // LCD_Alert(); // Event happened, LCD print location
+        LCD_Alert(); // Event happened, LCD print location
 
         break;
 
@@ -54,6 +54,12 @@ void http_get_task(void *pvParameters)
     esp_http_client_perform(client);
     esp_http_client_cleanup(client);
 
+    /* if Location_str is a empty string (no event occurred) */
+    if (strcmp(Location_str,"\0") == 0)
+        LCD_Secured(); // LCD secured mode
+
+    memset(Location_str,0,sizeof(Location_str)); // Clear Location_str
+
     vTaskDelete(NULL);
 }
 
@@ -79,9 +85,6 @@ void Clear_Flag_Task(void *params)
         {
             printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Clear_PIN));
             Clear_flag = true;
-
-            // LCD_Secured(); // Event dismissed, LCD display "Secured"
-
         }
     }
 }
@@ -104,10 +107,13 @@ void Clear_button(void)
 
 void LCD_Alert(void)
 {
-    LCD_printf(0, 0, "*** Alarm Alert! ***", NA, NA);
-    LCD_printf(2, 0, "%s", NA, Location_str);
+    LCD_clearScreen();
+    LCD_printf(0, 0, "***    Alert!    ***", NA, NA);
+    LCD_printf(1, 0, "Location:", NA, NA);
+    LCD_printf(2, 0, "", NA, Location_str);
 }
 void LCD_Secured(void)
 {
-    LCD_printf(2, 0, "------Secured!------", NA, NA);
+    LCD_clearScreen();
+    LCD_printf(1, 0, "------Secured!------", NA, NA);
 }

@@ -2,78 +2,12 @@
 
 /* Defining global variables */
 static const char *TAG = "Monitoring_device";
-// char api_key[] = "5570394"; /* Unique API Key to access the API */
-// char whatsapp_num[] = "15879690618"; /* Mobile number that the message will be sent to */
-// char aed_alert_msg[] = "***AED Alert***"; /* AED header message */
-// char Location [] = "Location: ETLC 2F"; /* Demo of location */
+
 char my_MAC[MAC_length]; /* Storage for my mac address */
 char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
 
 QueueHandle_t interputQueue;
 TaskHandle_t alert_msg_Handle = NULL;
-
-/* This function interates throught each characted of the received string. The string is then encoded (Transformed into HEX)*/
-// char *url_encode(const char *str)
-// {
-//     static const char *hex = "0123456789abcdef";
-//     static char encoded[1024];
-//     char *p = encoded;
-//     while (*str)
-//     {
-//         if (*str == '-' || *str == '_' || *str == '.' || *str == '~')
-//         {
-//             *p++ = *str;
-//         }
-//         else
-//         {
-//             *p++ = '%';
-//             *p++ = hex[*str >> 4];
-//             *p++ = hex[*str & 15];
-//         }
-//         str++;
-//     }
-//     *p = '\0';
-//     return encoded;
-// }
-
-// /* This function is responsible for sending the Whatsapp message */
-// void send_whatsapp_message(void *arg)
-// {
-//     char *alarm_msg = (char *)arg;
-
-//     /* Declaring variable that contains the URL of CallmeBot AP */
-//     char callmebot_url[] = "https://api.callmebot.com/whatsapp.php?phone=%s&text=%s&apikey=%s";
-
-//     char URL[strlen(callmebot_url)]; /* Array of characters with the size of callmebot_url */
-//     sprintf(URL, callmebot_url, whatsapp_num, url_encode(alarm_msg), api_key);
-//     ESP_LOGI(TAG, "URL = %s", URL);
-//     esp_http_client_config_t config = {
-//         .url = URL,
-//         .method = HTTP_METHOD_GET,
-//     };
-//     esp_http_client_handle_t client = esp_http_client_init(&config);
-//     esp_err_t err = esp_http_client_perform(client);
-
-//     if (err == ESP_OK)
-//     {
-//         int status_code = esp_http_client_get_status_code(client);
-//         if (status_code == 200)
-//         {
-//             ESP_LOGI(TAG, "Message sent Successfully");
-//         }
-//         else
-//         {
-//             ESP_LOGI(TAG, "Message sent Failed");
-//         }
-//     }
-//     else
-//     {
-//         ESP_LOGI(TAG, "Message sent Failed");
-//     }
-//     esp_http_client_cleanup(client);
-
-//     vTaskDelete(NULL);
-// }
 
 /* HTTP Client event handler. Used here to retrieve response. */
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
@@ -145,16 +79,6 @@ void get_MAC(void)
 
     sprintf(my_MAC, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
 }
-
-/* Call this function to send messages to whatsapp */
-// void send_whatup_message(void)
-// {
-//     xTaskCreate(send_whatsapp_message, "Send alert notification", 8192, &aed_alert_msg, 12, &alert_msg_Handle);
-//     vTaskDelay(200/portTICK_PERIOD_MS);
-//     xTaskCreate(send_whatsapp_message, "Send MAC address", 8192, &my_MAC, 8, &alert_msg_Handle);
-//     vTaskDelay(200/portTICK_PERIOD_MS);
-//     xTaskCreate(send_whatsapp_message, "Send location", 8192, &Location, 4, &alert_msg_Handle);
-// }
 
 static void IRAM_ATTR button_isr_handler(void *args)
 {
