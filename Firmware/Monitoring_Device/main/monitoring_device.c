@@ -48,7 +48,14 @@ void myMACto_GS(void *parameters)
     esp_http_client_perform(client);
 
     /* check http response */
-    if (strcmp(http_response,"Paired") == 0 || strcmp(http_response,"Accepted") == 0)
+    if (strcmp(http_response,"Accepted") == 0)
+    {
+        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
+
+        // goto sleep here
+
+    }
+    else if (strcmp(http_response,"Paired") == 0)
     {
         ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
     }
@@ -95,8 +102,8 @@ void interrupt_task(void *arg)
         {
             printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Trigger_PIN));
             printf("My MAC is: %s\n", my_MAC);
-        vTaskDelay(200/portTICK_PERIOD_MS);
-        xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
+            vTaskDelay(200/portTICK_PERIOD_MS);
+            xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
         }
     }
 }

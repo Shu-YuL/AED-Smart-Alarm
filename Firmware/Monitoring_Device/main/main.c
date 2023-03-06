@@ -94,26 +94,31 @@ static void initialize_wifi(void) {
     ESP_ERROR_CHECK( esp_wifi_start() );
 }
 
-
-static void check_wifi(void *pvParameters)
+static void check_wifi(void)
 {
     esp_netif_ip_info_t ip_info;
     memset(&ip_info, 0, sizeof(esp_netif_ip_info_t));
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-    while (1) {
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    wifi_ap_record_t ap_info;
+    esp_err_t connection_status = ESP_ERR_WIFI_NOT_CONNECT;
+    esp_netif_get_ip_info(sta_netif, &ip_info);
 
-        if (esp_netif_get_ip_info(sta_netif, &ip_info) == ESP_OK) {
-            wifi_ap_record_t ap_info;
-            esp_wifi_sta_get_ap_info(&ap_info);
-            ESP_LOGI(TAG, "-----------------------");
-            ESP_LOGI(TAG, "SSID: %s", ap_info.ssid);
-            ESP_LOGI(TAG, "IP Address: "IPSTR, IP2STR(&ip_info.ip));
-            //ESP_LOGI(TAG, "MAC Address: %X:%X:%X:%X:%X:%X:" ap_info.bssid[0],ap_info.bssid[1], ap_info.bssid[2], ap_info.bssid[3], ap_info.bssid[4], ap_info.bssid[5]);
-            ESP_LOGI(TAG, "-----------------------");
-        }
+    while ((ip_info.ip.addr) == 0) {
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        connection_status = esp_wifi_sta_get_ap_info(&ap_info);
+        esp_netif_get_ip_info(sta_netif, &ip_info);
     }
+
+    if (esp_netif_get_ip_info(sta_netif, &ip_info) == ESP_OK) {
+        ESP_LOGI(TAG, "-----------------------");
+        ESP_LOGI(TAG, "SSID: %s", ap_info.ssid);
+        ESP_LOGI(TAG, "IP Address: "IPSTR, IP2STR(&ip_info.ip));
+        //ESP_LOGI(TAG, "MAC Address: %X:%X:%X:%X:%X:%X:" ap_info.bssid[0],ap_info.bssid[1], ap_info.bssid[2], ap_info.bssid[3], ap_info.bssid[4], ap_info.bssid[5]);
+        ESP_LOGI(TAG, "-----------------------");
+    }
+
+    return;
 }
 
 #endif
@@ -128,7 +133,7 @@ void app_main(void)
     #ifdef UWS // if using UWS wifi
     ESP_ERROR_CHECK( nvs_flash_init() );
     initialize_wifi();
-    xTaskCreate(&check_wifi, "check_wifi", 4096, NULL, 5, NULL);
+    check_wifi();
     #endif
     
     get_MAC(); /* Function call to get device's MAC address*/
