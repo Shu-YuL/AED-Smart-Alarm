@@ -12,8 +12,8 @@
 
 /* Definitions */
 #define LCD_ADDR 0x27
-#define SDA_PIN  21
-#define SCL_PIN  22
+#define SDA_PIN  18
+#define SCL_PIN  19
 #define LCD_COLS 20
 #define LCD_ROWS 4
 #define NA 0

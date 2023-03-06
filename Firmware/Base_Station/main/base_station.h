@@ -22,7 +22,7 @@
 #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwa8s2pwkx1beC9xYe6XyZ1gZv2qkxX7VpWulMRrA_uCpPtcRvtn52d30e_sjhFCr88Zg/exec?read"
 #define LOC_MAX_LEN 20
 
-#define Clear_PIN 19 // Clear button IO pin number
+#define Clear_PIN 22 // Clear button IO pin number 22
 
 /* function prototypes */
 void http_get_task(void *pvParameters);
