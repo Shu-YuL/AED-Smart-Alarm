@@ -14,15 +14,10 @@
 #define clrAlmSW GPIO_NUM_22
 #define piezoRstSw GPIO_NUM_21
 
-// gpio_set_level(piezoEN, 0);
-// gpio_set_level(ledR0, 0);
-// gpio_set_level(ledG0, 0);
-// gpio_set_level(ledB0, 0);
-// gpio_set_level(ledR1, 0);
-// gpio_set_level(ledG1, 0);
-// gpio_set_level(ledB1, 0);
-// gpio_set_level(clrAlmSW, 1);
-// gpio_set_level(piezoRstSw, 1);
+static uint8_t defRed[] = [1, 0, 0]
+static uint8_t defGreen[] = [0, 1, 0]
+static uint8_t defBlue[] = [0, 0, 1]
+static uint8_t defAmber[] = [1, 1, 0]
 
 static void configAlmLED(void){
     // Initializing LEDO (Alarm Status LED)
@@ -40,68 +35,112 @@ static void configWifiLED(void){
 
 static void configSW_Periph(void){
     // Initializing Piezo Buzzer, Clear Alarm Switch, Piezo Reset Switch
-    gpio_set_direction(piezoEN,GPIO_MODE_OUTPUT);
+    gpio_set_direction(piezoEN, GPIO_MODE_OUTPUT);
     gpio_set_direction(clrAlmSW, GPIO_MODE_INPUT);
     gpio_set_direction(piezoRstSw, GPIO_MODE_INPUT);
 }
 
-static void setAlrmLED(int led0State){
+static void setLedColor(char color, esp_err_t red, esp_err_t green, esp_err_t blue){
+    if (color == 'r'){
+        gpio_set_level(red, defRed[0]);
+        gpio_set_level(green, defRed[1]);
+        gpio_set_level(blue, defRed[2]);
+    }
+    else if (color == 'b'){
+        gpio_set_level(red, defBlue[0]);
+        gpio_set_level(green, defBlue[1]);
+        gpio_set_level(blue, defBlue[2]);
+    }
+    else if (color == 'a'){
+        gpio_set_level(red, defAmber[0]);
+        gpio_set_level(green,defAmber[1]);
+        gpio_set_level(blue, defAmber[2]);              
+    }
+    else{
+        gpio_set_level(red, defGreen[0]);
+        gpio_set_level(green, defGreen[1]);
+        gpio_set_level(blue, defGreen[2]); 
+    }
+}
+
+static void ledStrobe(char strobeColor, uint8_t ledIdent){
+    gpio_num_t pinR;
+    gpio_num_t pinG;
+    gpio_num_t pinB;
+    esp_err_t red;
+    esp_err_t green;
+    esp_err_t blue;
+
+    if (ledIdent == 0){
+        pinR = (gpio_num_t)(ledR0 & 0x1F);
+        pinG = (gpio_num_t)(ledG0 & 0x1F);
+        pinB = (gpio_num_t)(ledB0 & 0x1F);
+        red = ledR0;
+        green = ledG0;
+        blue = ledB0;
+    }
+    else{
+        pinR = (gpio_num_t)(ledR1 & 0x1F);
+        pinG = (gpio_num_t)(ledG1 & 0x1F);
+        pinB = (gpio_num_t)(ledB1 & 0x1F);
+        red = ledR1;
+        green = ledG1;
+        blue = ledB1;
+    }
+    
+    while (strobeLed){
+        uint8_t sRed = (GPIO_REG_READ(GPIO_OUT_REG) >> pinR) & 1U;
+        uint8_t sGreen = (GPIO_REG_READ(GPIO_OUT_REG) >> pinG) & 1U;
+        uint8_t sBlue = (GPIO_REG_READ(GPIO_OUT_REG) >> pinB) & 1U;
+
+        if (strobeColor == 'g'){
+            gpio_set_level(green, !sGreen);
+        }
+        else if (strobeColor == 'b'){
+            gpio_set_level(blue, !sBlue);
+        }
+        else if (strobeColor == 'a'){
+            gpio_set_level(red, !sRed);
+            gpio_set_level(green, !sGreen);             
+        }
+        else{
+            gpio_set_level(red, !sRed);
+        }
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+
+}
+
+static void setAlrmLED(uint8_t led0State){
     switch (led0State)
     {
-        case 0: // Case 0 = Red - Active Alarm, not cleared
-            gpio_set_level(ledR0, 0);
-            gpio_set_level(ledG0, 1);
-            gpio_set_level(ledB0, 1);
-        
-        case 1: // Case 1 = Orange - Recent Alarm, not cleared
-            gpio_set_level(ledR0, 1);
-            gpio_set_level(ledG0, 0);
-            gpio_set_level(ledB0, 1);            
-
-        default: // Default = Green - No Alarm
-            gpio_set_level(ledR0, 1);
-            gpio_set_level(ledG0, 0);
-            gpio_set_level(ledB0, 1);           
+        case 0: // Case 0 = Red
+            setLedColor('r', ledR0, ledG0, ledB0);
+        case 1: // Case 1 = Amber
+            setLedColor('a', ledR0, ledG0, ledB0);
+        default: // Default = Green
+            setLedColor('g', ledR0, ledG0, ledB0);         
     }
 }
 
 static void setBatLED(int led1State){
     switch (led1State)
     {
-        case 0: // Case 0 = Red - Active Alarm, not cleared
-            gpio_set_level(ledR0, 0);
-            gpio_set_level(ledG0, 1);
-            gpio_set_level(ledB0, 1);
-        
-        case 1: // Case 1 = Orange - Recent Alarm, not cleared
-            gpio_set_level(ledR0, 1);
-            gpio_set_level(ledG0, 0);
-            gpio_set_level(ledB0, 1);            
-
-        default: // Default = Green - No Alarm
-            gpio_set_level(ledR0, 1);
-            gpio_set_level(ledG0, 0);
-            gpio_set_level(ledB0, 1);           
+        case 0: // Case 0 = Red
+            setLedColor('r', ledR1, ledG1, ledB1);
+        case 1: // Case 1 = Amber
+            setLedColor('a', ledR1, ledG1, ledB1);
+        default: // Default = Blue
+            setLedColor('b', ledR1, ledG1, ledB1);
     }
 }
 
-void app_main(void)
-{
+void app_main(void){
     configAlmLED();
     configWifiLED();
     configSW_Periph();
 
-    uint8_t alarmOn = 0;
-
-    // RGB LED 0 - Alarm Status LED (Green = No Alarm, Red = Active Alarm, Orange = Suspended Alarm);
-    gpio_set_level(ledR0, 0);
-    gpio_set_level(ledG0, 1);
-    gpio_set_level(ledB0, 1);
-
-    // RGB LED 1 - Wifi Status LED (Blue = Connected - Internet, Orange = Connected - No Internet, No light = Not Connected);
-    gpio_set_level(ledR1, 1);
-    gpio_set_level(ledG1, 1);
-    gpio_set_level(ledB1, 1);
+    uint8_t alarmState = 0;
 
 }
 // Buzzer Reset Interrupt
