@@ -42,7 +42,7 @@ extern uint8_t client_crt_start[] asm("_binary_client_crt_start");
 extern uint8_t client_crt_end[]   asm("_binary_client_crt_end");
 extern uint8_t client_key_start[] asm("_binary_client_key_start");
 extern uint8_t client_key_end[]   asm("_binary_client_key_end");
-#endif;
+#endif
 
 static void wifi_event_handler(void* arg, esp_event_base_t event, int32_t event_id, void* event_data) {
     
