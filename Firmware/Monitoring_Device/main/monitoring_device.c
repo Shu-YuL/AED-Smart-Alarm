@@ -7,7 +7,6 @@ char my_MAC[MAC_length]; /* Storage for my mac address */
 char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
 
 QueueHandle_t interputQueue;
-TaskHandle_t alert_msg_Handle = NULL;
 
 /* HTTP Client event handler. Used here to retrieve response. */
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
@@ -52,8 +51,7 @@ void myMACto_GS(void *parameters)
     {
         ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
 
-        // goto sleep here
-
+        enter_deep_sleep(); // go to sleep if http request is accepted
     }
     else if (strcmp(http_response,"Paired") == 0)
     {
@@ -87,45 +85,25 @@ void get_MAC(void)
     sprintf(my_MAC, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
 }
 
-static void IRAM_ATTR button_isr_handler(void *args)
-{
-    int pinNumber = (int)args;
-    xQueueSendFromISR(interputQueue, &pinNumber, NULL);
+/* call configure_sleep() near the beginning of app_main() */
+void configure_sleep(void) {
+ 
+    printf("Configuring EXT0 wakeup on GPIO pin %d\n", WAKEUP_PIN);
+
+    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(WAKEUP_PIN, 1)); //WAKEUP_PIN used as interrupt to wake up from deep sleep
+
+    // Configure pullup/downs via RTCIO to tie wakeup pins to inactive level during deep sleep.
+    // EXT0 resides in the same power domain (RTC_PERIPH) as the RTC IO pullup/downs.
+    ESP_ERROR_CHECK(rtc_gpio_pullup_dis(WAKEUP_PIN));
+    ESP_ERROR_CHECK(rtc_gpio_pulldown_en(WAKEUP_PIN));
+
+    // Isolate GPIO12 pin from external circuits. This is needed for modules
+    // which have an external pull-up resistor on GPIO12 (such as ESP32-WROVER)
+    // to minimize current consumption.
+    rtc_gpio_isolate(GPIO_NUM_12);
 }
-
-void interrupt_task(void *arg)
-{
-    int pinNumber;
-    while (true)
-    {
-        if (xQueueReceive(interputQueue, &pinNumber, portMAX_DELAY))
-        {
-            printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Trigger_PIN));
-            printf("My MAC is: %s\n", my_MAC);
-            vTaskDelay(200/portTICK_PERIOD_MS);
-            xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
-        }
-    }
-}
-
-void interrupt_init(void)
-{
-    esp_rom_gpio_pad_select_gpio(Trigger_PIN);
-    gpio_set_direction(Trigger_PIN, GPIO_MODE_INPUT);
-
-    /* set pullup */
-    // gpio_pulldown_dis(Trigger_PIN);
-    // gpio_pullup_en(Trigger_PIN);
-    // gpio_set_intr_type(Trigger_PIN, GPIO_INTR_NEGEDGE);
-
-    /* set pulldown */
-    gpio_pulldown_en(Trigger_PIN);
-    gpio_pullup_dis(Trigger_PIN);
-    gpio_set_intr_type(Trigger_PIN, GPIO_INTR_POSEDGE);
-    
-    interputQueue = xQueueCreate(10, sizeof(int));
-    xTaskCreate(interrupt_task, "interrupt_task", 4096, NULL, 1, NULL);
-
-    gpio_install_isr_service(ESP_INR_FLAG_DEFAULT);
-    gpio_isr_handler_add(Trigger_PIN, button_isr_handler, (void *)Trigger_PIN);
+/* Call enter_deep_sleep() when you want to enter deep sleep */
+void enter_deep_sleep(void) {
+    esp_wifi_stop(); //shut down WiFi controller  
+    esp_deep_sleep_start(); 
 }

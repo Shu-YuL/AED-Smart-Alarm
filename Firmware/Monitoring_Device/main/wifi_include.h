@@ -36,7 +36,6 @@
 #define WIFI_FAIL_BIT BIT1
 
 /* function prototypes */
-void setup_nvs(void);
 void connect_wifi(void);
 
 #endif

@@ -10,6 +10,16 @@
 
 static const char *TAG = "Main";
 
+void setup_nvs(void) {
+    //Initializes NVS
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+}
+
 #ifdef UWS
 
 /* FreeRTOS event group to signal when we are connected & ready to make a request */
@@ -114,7 +124,6 @@ static void check_wifi(void)
         ESP_LOGI(TAG, "-----------------------");
         ESP_LOGI(TAG, "SSID: %s", ap_info.ssid);
         ESP_LOGI(TAG, "IP Address: "IPSTR, IP2STR(&ip_info.ip));
-        //ESP_LOGI(TAG, "MAC Address: %X:%X:%X:%X:%X:%X:" ap_info.bssid[0],ap_info.bssid[1], ap_info.bssid[2], ap_info.bssid[3], ap_info.bssid[4], ap_info.bssid[5]);
         ESP_LOGI(TAG, "-----------------------");
     }
 
@@ -123,19 +132,24 @@ static void check_wifi(void)
 
 #endif
 
+TaskHandle_t alert_msg_Handle = NULL;
+
 void app_main(void)
 {
-    #ifdef HOME // if using wifi off campus
+    configure_sleep();
+
     setup_nvs();
+
+    #ifdef HOME // if using wifi off campus
     connect_wifi();
     #endif
 
     #ifdef UWS // if using UWS wifi
-    ESP_ERROR_CHECK( nvs_flash_init() );
+    // ESP_ERROR_CHECK( nvs_flash_init() );
     initialize_wifi();
     check_wifi();
     #endif
     
     get_MAC(); /* Function call to get device's MAC address*/
-    interrupt_init(); /* Initialize GPIO Interrupt */
+    xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
 }

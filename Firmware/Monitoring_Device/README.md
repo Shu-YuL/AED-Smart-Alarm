@@ -1,6 +1,6 @@
 # Monitoring Device
 
--- updated March 1, 2023 by Shu-Yu Lin
+-- updated March 9, 2023 by Shu-Yu Lin
 
 ## Development Progress
 
@@ -9,12 +9,11 @@
 - Wifi
 - HTTP Client
   - Door switch (currently using a button to simulate triggering behavioor) GPIO interrupt (Post device MAC addr to Google Sheet)
+- Deep Sleep
 
 ### What's left
 
-- Auto sleep after complete a whole process
-- Wake up on Door switch trigger
-- Optimal power saving
+- None
 
 ## How to use
 
@@ -34,10 +33,10 @@ Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for 
 
 (ESP32-DevkitC-V4)
 
-### Clear Button (Currently PIN 18)
+### Door Switch (PIN 25)
 
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
-Lead 1 - PIN 18 INPUT, PULLDOWN, POS EDGE TRIGGER
+Lead 1 - PIN 25 INPUT, PULLDOWN, POS EDGE TRIGGER
 
 Lead 2 - 3.3V

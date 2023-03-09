@@ -2,16 +2,6 @@
 #ifndef MONITORING_DEVICE_H
 #define MONITORING_DEVICE_H
 
-/* Definitions */
-/* Change the value below to change external interrupt Pin */
-#define Trigger_PIN 18
-
-#define MAC_length 20
-#define HTTP_RESPONSE_LEN 10
-#define ESP_INR_FLAG_DEFAULT 0
-
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwa8s2pwkx1beC9xYe6XyZ1gZv2qkxX7VpWulMRrA_uCpPtcRvtn52d30e_sjhFCr88Zg/exec?MAC=%s"
-
 /* Includes */
 #include <stdio.h>
 #include <string.h>
@@ -27,13 +17,26 @@
 #include "esp_http_client.h"
 #include "driver/gpio.h"
 #include "esp_mac.h"
+#include "esp_wifi.h"
+
+#include "esp_sleep.h"
+#include "driver/rtc_io.h"
+
+/* Definitions */
+#define MAC_length 20
+#define HTTP_RESPONSE_LEN 10
+#define ESP_INR_FLAG_DEFAULT 0
+
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwaTvT9aut2pFeq2BCMkPpkYDqu8bX7S-qF6RX0l2_YtwOzVQx3EEnIrhQKvNR2C8eQ-A/exec?MAC=%s"
+
+#define WAKEUP_PIN 25
+
+extern char my_MAC[MAC_length];
 
 /* Function Definitions */
-// void send_whatsapp_message(void *arg);
 void myMACto_GS(void *parameters);
 void get_MAC(void);
-// void send_whatup_message(void);
-void interrupt_task(void *arg);
-void interrupt_init(void);
+void configure_sleep(void);
+void enter_deep_sleep(void);
 
 #endif
