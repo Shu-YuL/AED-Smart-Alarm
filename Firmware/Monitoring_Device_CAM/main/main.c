@@ -8,7 +8,7 @@
 #include "wifi_include.h"
 #include "UWS_include.h"
 #include "camera_include.h"
-test
+
 static const char *TAG = "Main";
 
 void setup_nvs(void) {
