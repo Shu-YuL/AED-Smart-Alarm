@@ -22,8 +22,8 @@
 
 #define WIFI_SSID "UWS"
 #define WIFI_EAP_ID "uws.ualberta.ca"
-#define WIFI_EAP_USERNAME "slin1"
-#define WIFI_EAP_PASSWORD "Linkstart19"
+#define WIFI_EAP_USERNAME "ccid"
+#define WIFI_EAP_PASSWORD "password"
 
 #endif
 #endif
