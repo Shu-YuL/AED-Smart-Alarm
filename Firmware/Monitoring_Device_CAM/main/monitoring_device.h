@@ -21,7 +21,7 @@
 
 /* Definitions */
 /* Change the value below to change external interrupt Pin */
-#define Trigger_PIN 18
+#define Trigger_PIN 13
 
 #define MAC_length 20
 #define IP_length 15

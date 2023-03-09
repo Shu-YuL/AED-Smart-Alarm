@@ -3,8 +3,6 @@
 
 static const char *TAG = "WIFI";
 
-#ifdef HOME
-
 /* FreeRTOS event group to signal when wifi is connected*/
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -109,5 +107,3 @@ void connect_wifi(void)
     }
     vEventGroupDelete(s_wifi_event_group);
 }
-
-#endif
