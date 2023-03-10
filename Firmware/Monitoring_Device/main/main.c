@@ -1,9 +1,26 @@
-/*********************************************************************************************************************
- Group 16: AED Smart Alarm Monitoring Device
+/* Group: 16 AED Smart Alarm - Monitoring Device
+ * Module: main
+ * Description: This is the main program of our AED Monitoring device. The purpose of this code is to send the
+                device's MAC address to the base station's web server via wi-fi.
+ * Collaborators: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
+ * Author: - ESP32 Tutorials
+           - Dylan Work
+ * Contact: - admin@esp32tutorials.com
+            - https://www.esp32.com/memberlist.php?mode=viewprofile&u=19767&sid=dfb10c8bb78141e173982f669af2ebc0
+ * Sources/URLs: - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
+                 - https://www.esp32.com/viewtopic.php?t=21310
+ * Revision Information: V.0.0 (First Revision)
+ * Date: 10/March/2023
+ * Copyright: N/A
+ * Functions: - setup_nvs(void)
+              - configure_sleep()
+              - connect_wifi()
+              - initialize_wifi()
+              - check_wifi()
+              - get_MAC()
+              - myMACto_GS()
+*/
 
- Code Description: The purpose of this code is to send the device's MAC address
-                   to the Google Sheet via wi-fi.
-**********************************************************************************************************************/
 #include "monitoring_device.h"
 #include "wifi_include.h"
 #include "UWS_include.h"
@@ -145,11 +162,10 @@ void app_main(void)
     #endif
 
     #ifdef UWS // if using UWS wifi
-    // ESP_ERROR_CHECK( nvs_flash_init() );
     initialize_wifi();
     check_wifi();
     #endif
     
     get_MAC(); /* Function call to get device's MAC address*/
-    xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
+    xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle); /* Call subroutine to send MAC address to base station */
 }
