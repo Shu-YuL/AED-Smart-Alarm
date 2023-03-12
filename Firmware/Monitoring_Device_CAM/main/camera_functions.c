@@ -1,11 +1,21 @@
 #include "camera_include.h"
 
+/* Declaring Global Variables */
 static const char *TAG = "esp32-cam Webserver";
 
 static const char* _STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 static const char* _STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: init_camera
+ * Description: This function initializes a number of fields that specify the configuration
+                for the ESP32-CAM.
+ * Input: void
+ * Output: - esp_err_t value indicating the status of the initialization
+           - ESP-OK -> no errors occurred
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 esp_err_t init_camera(void)
 {
     camera_config_t camera_config = {
@@ -38,13 +48,24 @@ esp_err_t init_camera(void)
         .fb_count = 1,
         .grab_mode = CAMERA_GRAB_WHEN_EMPTY};//CAMERA_GRAB_LATEST. Sets when buffers should be filled
     esp_err_t err = esp_camera_init(&camera_config);
+
+    /* check if errors */
     if (err != ESP_OK)
     {
         return err;
     }
-    return ESP_OK;
+    return ESP_OK; /* Good to go */
 }
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: jpg_stream_httpd_handler
+ * Description: This function is called to handle GET requests on the root URI of the HTTP
+                server. It streams whatever the camera is capturing and sends the buffer
+                containing JPEG images in the HTTP response.
+ * Input: HTTP request type
+ * Output: function returns the frame buffer to the camera using esp_camera_fb_return
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     camera_fb_t * fb = NULL;
     esp_err_t res = ESP_OK;
@@ -61,6 +82,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
         return res;
     }
 
+    /* Loop that captures frames from the camera continuously */
     while(true){
         fb = esp_camera_fb_get();
         if (!fb) {
@@ -111,6 +133,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     return res;
 }
 
+
 httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
@@ -118,6 +141,14 @@ httpd_uri_t uri_get = {
     .user_ctx = NULL
 };
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: setup_server
+ * Description: This function sets up an HTTP server to get request on the URI root. When GET
+                request is received, the server calls the function above to handel the request.
+ * Input: void
+ * Output: function returns a handle to the HTTP server, which can be used to control the server
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 httpd_handle_t setup_server(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();

@@ -1,9 +1,24 @@
-/*********************************************************************************************************************
- Group 16: AED Smart Alarm Monitoring Device
+/* Group: 16 AED Smart Alarm - Monitoring Device
+ * Module: main
+ * Description: This is the main program of our AED Monitoring Device with Camera. The purpose of this code is to send the
+                device's MAC and IP address to the base station's web server via wi-fi.
+ * Collaborators: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
+ * Author: - ESP32 Tutorials
+ * Contact: - admin@esp32tutorials.com
+ * Sources/URLs: - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
+                 - https://esp32tutorials.com/esp32-cam-esp-idf-live-streaming-web-server/#more-2787
+ * Revision Information: V.0.0 (First Revision)
+ * Date: 12/March/2023
+ * Copyright: N/A
+ * Functions: - setup_nvs(void)
+              - connect_wifi()
+              - initialize_wifi()
+              - check_wifi()
+              - get_MAC()
+              - setup_server()
+              - init_camera()
+*/
 
- Code Description: The purpose of this code is to send the device's MAC address
-                   to the Google Sheet via wi-fi.
-**********************************************************************************************************************/
 #include "monitoring_device.h"
 #include "wifi_include.h"
 #include "UWS_include.h"
@@ -29,9 +44,7 @@ static EventGroupHandle_t wifi_event_group;
 /* esp netif object representing the WIFI station */
 static esp_netif_t *sta_netif = NULL;
 
-
 const int wifi_connected = BIT0; //flag indicating whether or not we are connnected to wifi
-
 
 #ifdef INCLUDE_CA_FILES
 /* CA cert, taken from ca.pem
@@ -47,7 +60,6 @@ const int wifi_connected = BIT0; //flag indicating whether or not we are connnec
 
 extern uint8_t ca_pem_start[] asm("_binary_ca_pem_start");
 extern uint8_t ca_pem_end[]   asm("_binary_ca_pem_end");
-
 
 extern uint8_t client_crt_start[] asm("_binary_client_crt_start");
 extern uint8_t client_crt_end[]   asm("_binary_client_crt_end");
@@ -154,12 +166,13 @@ void app_main(void)
     get_MAC(); /* Function call to get device's MAC address*/
     interrupt_init(); /* Initialize GPIO Interrupt */
 
-    err = init_camera();
+    err = init_camera(); /* Function call to setup camera */
     if (err != ESP_OK)
     {
         printf("err: %s\n", esp_err_to_name(err));
         return;
     }
-    setup_server();
+
+    setup_server(); /* Function call to setup web server */
     ESP_LOGI(TAG, "ESP32 CAM Web Server is up and running\n");
 }
