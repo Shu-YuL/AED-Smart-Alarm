@@ -26,14 +26,14 @@
 #define MAC_length 20
 #define HTTP_RESPONSE_LEN 10
 #define ESP_INR_FLAG_DEFAULT 0
-
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwaTvT9aut2pFeq2BCMkPpkYDqu8bX7S-qF6RX0l2_YtwOzVQx3EEnIrhQKvNR2C8eQ-A/exec?MAC=%s"
+/* web server URL to perform HTTP request */
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbxsAbE5cSaN_FxcQm5Xzc2TBPFxaeiWPxaeHIKdNlzQo_26Sp90bPTuTgN7Vf7Q7_4tzg/exec?MAC=%s"
 
 #define WAKEUP_PIN 25
 
 extern char my_MAC[MAC_length];
 
-/* Function Definitions */
+/* Function Prototypes */
 void myMACto_GS(void *parameters);
 void get_MAC(void);
 void configure_sleep(void);

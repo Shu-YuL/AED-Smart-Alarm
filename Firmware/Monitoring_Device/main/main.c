@@ -1,14 +1,14 @@
 /* Group: 16 AED Smart Alarm - Monitoring Device
  * Module: main
  * Description: This is the main program of our AED Monitoring device. The purpose of this code is to send the
-                device's MAC address to the base station's web server via wi-fi.
- * Collaborators: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
- * Author: - ESP32 Tutorials
-           - Dylan Work
- * Contact: - admin@esp32tutorials.com
-            - https://www.esp32.com/memberlist.php?mode=viewprofile&u=19767&sid=dfb10c8bb78141e173982f669af2ebc0
- * Sources/URLs: - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
-                 - https://www.esp32.com/viewtopic.php?t=21310
+                device's MAC address to the web server via HTTP request.
+ * Authors: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
+ * References:  - Espressif Official API References
+ *                  - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
+ *                  - https://github.com/espressif/esp-idf/tree/47852846d3e89580ef4da28210b6ffc1cb5eaa9d/examples
+ *              - ESP32 Tutorials (admin@esp32tutorials.com)
+ *                  - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
+ *                  - https://www.esp32.com/viewtopic.php?t=21310
  * Revision Information: V.0.0 (First Revision)
  * Date: 10/March/2023
  * Copyright: N/A
@@ -20,11 +20,10 @@
               - get_MAC()
               - myMACto_GS()
 */
-
 #include "monitoring_device.h"
 #include "wifi_include.h"
 #include "UWS_include.h"
-
+/* Defining TAG name for debugging */
 static const char *TAG = "Main";
 
 void setup_nvs(void) {

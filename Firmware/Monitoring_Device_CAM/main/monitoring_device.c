@@ -2,7 +2,7 @@
 
 /* Defining TAG name for debugging */
 static const char *TAG = "Monitoring_device";
-/* Defining static global variables */
+/* Defining global variables */
 char my_MAC[MAC_length]; /* Storage for my mac address */
 char my_IP[IP_length]; /* Storage for my ip address */
 char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
@@ -40,7 +40,7 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
  * Description: This function is responsible for sending the device's MAC address to the
                 web server (Google Sheet). The MAC address will be registered in Google Sheets.
  * Input: Pointer to'parameters' -> address contains the device's MAC
- * Output: esp_http_client_handle_t, NULL if any errors
+ * Output: No return
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 void myMACto_GS(void *parameters)

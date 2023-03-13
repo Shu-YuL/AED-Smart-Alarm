@@ -1,14 +1,21 @@
 #include "monitoring_device.h"
 
-/* Defining global variables */
+/* Defining TAG name for debugging */
 static const char *TAG = "Monitoring_device";
-
+/* Defining global variables */
 char my_MAC[MAC_length]; /* Storage for my mac address */
 char http_response[HTTP_RESPONSE_LEN]; /* storage for http response message */
 
 QueueHandle_t interputQueue;
 
-/* HTTP Client event handler. Used here to retrieve response. */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: client_event_get_handler
+ * Description: HTTP Client event handler. Used here to retrieve HTTP request response.
+ * Input: evt
+ * Output: ESP_OK return if successfully retrives HTTP response
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
+
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -30,9 +37,9 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 /* -----------------------------------------------------------------------------------------
  * Subroutine Name: myMACto_GS
  * Description: This function is responsible for sending the device's MAC address to the
-                base station. The MAC address will be registered in Google Sheets.
+                web server (Google Sheet). The MAC address will be registered in Google Sheets.
  * Input: Pointer to'parameters' -> address contains the device's MAC
- * Output: esp_http_client_handle_t, NULL if any errors
+ * Output: No return
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 void myMACto_GS(void *parameters)
@@ -45,15 +52,15 @@ void myMACto_GS(void *parameters)
     sprintf(BSURL, base_GS_url, device_MAC);
     ESP_LOGI(TAG, "GET request sent, URL = %s", BSURL);
 
-    /* Specifying http method */
+    /* Configuring http method */
     esp_http_client_config_t config = {
         .url = BSURL,
         .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};
 
-    /* The following function is used as input to ther functions in the interface.
-       The function returns esp_http_client_handle_t, NULL if any errors */
+    /* The following functions initialize HTTP client and then perform an HTTP request.
+       The function returns NULL if HTTP request performed with no errors returned */
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
@@ -82,7 +89,7 @@ void myMACto_GS(void *parameters)
 
     esp_http_client_cleanup(client); /* Operation is complete */
 
-    vTaskDelete(NULL); /* Delete task when done to free memory */
+    vTaskDelete(NULL); /* Delete task when done */
 }
 
 /* -----------------------------------------------------------------------------------------
