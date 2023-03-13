@@ -4,7 +4,7 @@
 static const char *TAG = "Monitoring_device";
 
 char my_MAC[MAC_length]; /* Storage for my mac address */
-char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
+char http_response[HTTP_RESPONSE_LEN]; /* storage for http response message */
 
 QueueHandle_t interputQueue;
 
@@ -27,7 +27,14 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-/* This function is responsible for sending the MAC address to the Google Sheet */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: myMACto_GS
+ * Description: This function is responsible for sending the device's MAC address to the
+                base station. The MAC address will be registered in Google Sheets.
+ * Input: Pointer to'parameters' -> address contains the device's MAC
+ * Output: esp_http_client_handle_t, NULL if any errors
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 void myMACto_GS(void *parameters)
 {
     char *device_MAC = (char *)parameters;
@@ -37,16 +44,20 @@ void myMACto_GS(void *parameters)
     char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of url */
     sprintf(BSURL, base_GS_url, device_MAC);
     ESP_LOGI(TAG, "GET request sent, URL = %s", BSURL);
+
+    /* Specifying http method */
     esp_http_client_config_t config = {
         .url = BSURL,
         .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};
 
+    /* The following function is used as input to ther functions in the interface.
+       The function returns esp_http_client_handle_t, NULL if any errors */
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
-    /* check http response */
+    /* Check HTTP response */
     if (strcmp(http_response,"Accepted") == 0)
     {
         ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
@@ -66,15 +77,22 @@ void myMACto_GS(void *parameters)
             esp_http_client_perform(client);
             retry++;
         }
-        else ESP_LOGI(TAG,"Reached Maximum retry");
+        else ESP_LOGI(TAG,"Reached Maximum retry"); /* Error message */
     }
 
-    esp_http_client_cleanup(client);
+    esp_http_client_cleanup(client); /* Operation is complete */
 
-    vTaskDelete(NULL);
+    vTaskDelete(NULL); /* Delete task when done to free memory */
 }
 
-/* This function retrieves the MAC address from the device and saves it into 'my_MAC' */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: get_MAC
+ * Description: This function retrieves the MAC address from the device and saves it into
+                'my_MAC' 
+ * Input: void
+ * Output: void
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 void get_MAC(void)
 {
     unsigned char mac_base[6] = {0};
@@ -102,6 +120,7 @@ void configure_sleep(void) {
     // to minimize current consumption.
     rtc_gpio_isolate(GPIO_NUM_12);
 }
+
 /* Call enter_deep_sleep() when you want to enter deep sleep */
 void enter_deep_sleep(void) {
     esp_wifi_stop(); //shut down WiFi controller  

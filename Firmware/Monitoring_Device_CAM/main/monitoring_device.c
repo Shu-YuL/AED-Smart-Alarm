@@ -10,7 +10,13 @@ char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
 QueueHandle_t interputQueue;
 TaskHandle_t alert_msg_Handle = NULL;
 
-/* HTTP Client event handler. Used here to retrieve response. */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: client_event_get_handler
+ * Description: HTTP Client event handler. Used here to retrieve response.
+ * Input: evt
+ * Output: ESP_OK return if successfully retrives HTTP response
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -29,7 +35,14 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     return ESP_OK;
 }
 
-/* This function is responsible for sending the MAC address to the Google Sheet */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: myMACto_GS
+ * Description: This function is responsible for sending the device's MAC address to the
+                base station. The MAC address will be registered in Google Sheets.
+ * Input: Pointer to'parameters' -> address contains the device's MAC
+ * Output: esp_http_client_handle_t, NULL if any errors
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 void myMACto_GS(void *parameters)
 {
     char *device_MAC = (char *)parameters;
@@ -37,18 +50,22 @@ void myMACto_GS(void *parameters)
     int retry = 0;
 
     char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of url */
-    sprintf(BSURL, base_GS_url, device_MAC, my_IP);
+    sprintf(BSURL, base_GS_url, device_MAC);
     ESP_LOGI(TAG, "GET request sent, URL = %s", BSURL);
+
+    /* Specifying http method */
     esp_http_client_config_t config = {
         .url = BSURL,
         .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};
 
+    /* The following function is used as input to ther functions in the interface.
+       The function returns esp_http_client_handle_t, NULL if any errors */
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
-    /* check http response */
+    /* Check HTTP response */
     if (strcmp(http_response,"Accepted") == 0)
     {
         ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
@@ -66,15 +83,22 @@ void myMACto_GS(void *parameters)
             esp_http_client_perform(client);
             retry++;
         }
-        else ESP_LOGI(TAG,"Reached Maximum retry");
+        else ESP_LOGI(TAG,"Reached Maximum retry"); /* Error message */
     }
 
-    esp_http_client_cleanup(client);
+    esp_http_client_cleanup(client); /* Operation is complete */
 
-    vTaskDelete(NULL);
+    vTaskDelete(NULL); /* Delete task when done to free memory */
 }
 
-/* This function retrieves the MAC address from the device and saves it into 'my_MAC' */
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: get_MAC
+ * Description: This function retrieves the MAC address from the device and saves it into
+                'my_MAC' 
+ * Input: void
+ * Output: void
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 void get_MAC(void)
 {
     unsigned char mac_base[6] = {0};
@@ -85,17 +109,44 @@ void get_MAC(void)
     sprintf(my_MAC, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
 }
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: IRAM_ATTR
+ * Description: This function is the interrupt handler or ISR. It is called whenever an
+                interrupt occurs. 
+ * Input: pointer 'args' point to the address containing the GPIO pin number
+ * Output: void
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 static void IRAM_ATTR button_isr_handler(void *args)
 {
     int pinNumber = (int)args;
+
+    /* xQueueSendFromISR will send an item from a queue. It takes three parameters. The first
+       parameter is the queue handle on which the item is to be posted. The second parameter
+       is the GPIO interrupt number. Finally, the third parameter is the priority number which
+       is NULL in our case. */
     xQueueSendFromISR(interputQueue, &pinNumber, NULL);
 }
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: interrupt_task
+ * Description: When the interrupt occurs, this function is called to send the device's MAC
+                address to the Base Station. 
+ * Input: pointer 'args' point to the address of the buffer into which the receive item is
+          copied
+ * Output: void
+ * Registers Affected: N/A
+ ----------------------------------------------------------------------------------------- */
 void interrupt_task(void *arg)
 {
     int pinNumber;
     while (true)
     {
+        /* xQueueReceive checks if an item is received from the queue. 
+           It takes three parameters. The first parameter is the queue handle on which the
+           item is to be received. The second parameter is the pointer to the buffer into which
+           the receive item is copied. Finally, the third parameter specifies the max amount of
+           time the task should block waiting for an item to receive */
         if (xQueueReceive(interputQueue, &pinNumber, portMAX_DELAY))
         {
             printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Trigger_PIN));
@@ -106,6 +157,15 @@ void interrupt_task(void *arg)
     }
 }
 
+/* -----------------------------------------------------------------------------------------
+ * Subroutine Name: interrupt_init
+ * Description: This function initialize external interrupts. We setup parameters such as
+                triggering mode, interrupt type, and pull-up/pull-down. 
+ * Input: void
+ * Output: void
+ * Registers Affected: - General Purpose Input Output register
+                       - Interrupt Control Register
+ ----------------------------------------------------------------------------------------- */
 void interrupt_init(void)
 {
     esp_rom_gpio_pad_select_gpio(Trigger_PIN);
