@@ -1,8 +1,8 @@
 #include "monitoring_device.h"
 
-/* Defining global variables */
+/* Defining TAG name for debugging */
 static const char *TAG = "Monitoring_device";
-
+/* Defining static global variables */
 char my_MAC[MAC_length]; /* Storage for my mac address */
 char my_IP[IP_length]; /* Storage for my ip address */
 char http_response[HTTP_RESPONSE_LEN]; // storage for http response message
@@ -12,7 +12,7 @@ TaskHandle_t alert_msg_Handle = NULL;
 
 /* -----------------------------------------------------------------------------------------
  * Subroutine Name: client_event_get_handler
- * Description: HTTP Client event handler. Used here to retrieve response.
+ * Description: HTTP Client event handler. Used here to retrieve HTTP request response.
  * Input: evt
  * Output: ESP_OK return if successfully retrives HTTP response
  * Registers Affected: N/A
@@ -38,7 +38,7 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 /* -----------------------------------------------------------------------------------------
  * Subroutine Name: myMACto_GS
  * Description: This function is responsible for sending the device's MAC address to the
-                base station. The MAC address will be registered in Google Sheets.
+                web server (Google Sheet). The MAC address will be registered in Google Sheets.
  * Input: Pointer to'parameters' -> address contains the device's MAC
  * Output: esp_http_client_handle_t, NULL if any errors
  * Registers Affected: N/A
@@ -50,18 +50,18 @@ void myMACto_GS(void *parameters)
     int retry = 0;
 
     char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of url */
-    sprintf(BSURL, base_GS_url, device_MAC);
+    sprintf(BSURL, base_GS_url, device_MAC, my_IP);
     ESP_LOGI(TAG, "GET request sent, URL = %s", BSURL);
 
-    /* Specifying http method */
+    /* Configuring http method */
     esp_http_client_config_t config = {
         .url = BSURL,
         .method = HTTP_METHOD_GET,
         .cert_pem = NULL,
         .event_handler = client_event_get_handler};
 
-    /* The following function is used as input to ther functions in the interface.
-       The function returns esp_http_client_handle_t, NULL if any errors */
+    /* The following functions initialize HTTP client and then perform an HTTP request.
+       The function returns NULL if HTTP request performed with no errors returned */
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
@@ -88,7 +88,7 @@ void myMACto_GS(void *parameters)
 
     esp_http_client_cleanup(client); /* Operation is complete */
 
-    vTaskDelete(NULL); /* Delete task when done to free memory */
+    vTaskDelete(NULL); /* Delete task when done */
 }
 
 /* -----------------------------------------------------------------------------------------
@@ -110,9 +110,10 @@ void get_MAC(void)
 }
 
 /* -----------------------------------------------------------------------------------------
- * Subroutine Name: IRAM_ATTR
- * Description: This function is the interrupt handler or ISR. It is called whenever an
-                interrupt occurs. 
+ * Subroutine Name: button_isr_handler
+ * Description: This function is the interrupt service routine (ISR). Routine performed 
+ *              whenever the assigned interrupt event occurs, in this case it's the button 
+ *              status.
  * Input: pointer 'args' point to the address containing the GPIO pin number
  * Output: void
  * Registers Affected: N/A
@@ -121,7 +122,7 @@ static void IRAM_ATTR button_isr_handler(void *args)
 {
     int pinNumber = (int)args;
 
-    /* xQueueSendFromISR will send an item from a queue. It takes three parameters. The first
+    /* xQueueSendFromISR will send an item to a queue. It takes three parameters. The first
        parameter is the queue handle on which the item is to be posted. The second parameter
        is the GPIO interrupt number. Finally, the third parameter is the priority number which
        is NULL in our case. */
@@ -152,6 +153,7 @@ void interrupt_task(void *arg)
             printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Trigger_PIN));
             printf("My MAC is: %s\n", my_MAC);
             vTaskDelay(200/portTICK_PERIOD_MS);
+            /* Perform function 'myMACto_GS' */
             xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle);
         }
     }

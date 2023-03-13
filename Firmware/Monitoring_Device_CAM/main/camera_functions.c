@@ -1,8 +1,8 @@
 #include "camera_include.h"
 
-/* Declaring Global Variables */
+/* Defining TAG name for debugging */
 static const char *TAG = "esp32-cam Webserver";
-
+/* Defining static global variables */
 static const char* _STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 static const char* _STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";
@@ -61,9 +61,9 @@ esp_err_t init_camera(void)
  * Subroutine Name: jpg_stream_httpd_handler
  * Description: This function is called to handle GET requests on the root URI of the HTTP
                 server. It streams whatever the camera is capturing and sends the buffer
-                containing JPEG images in the HTTP response.
+                containing JPEG images and publish content on the HTTP server.
  * Input: HTTP request type
- * Output: function returns the frame buffer to the camera using esp_camera_fb_return
+ * Output: function returns the error response
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
@@ -134,7 +134,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     return res;
 }
 
-
+/* Specify behavior when client request GET on the root URL */
 httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
@@ -145,9 +145,10 @@ httpd_uri_t uri_get = {
 /* -----------------------------------------------------------------------------------------
  * Subroutine Name: setup_server
  * Description: This function sets up an HTTP server to get request on the URI root. When GET
-                request is received, the server calls the function above to handel the request.
+                request is received, the server follows the behavior specified above to 
+                handel the request.
  * Input: void
- * Output: function returns a handle to the HTTP server, which can be used to control the server
+ * Output: function returns error message
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 httpd_handle_t setup_server(void)

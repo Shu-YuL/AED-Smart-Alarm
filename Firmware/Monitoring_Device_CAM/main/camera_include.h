@@ -12,6 +12,6 @@
 
 #define PART_BOUNDARY "123456789000000000000987654321"
 #define CONFIG_XCLK_FREQ 20000000 
-
+/* Function Prototypes */
 esp_err_t init_camera(void);
 httpd_handle_t setup_server(void);

@@ -1,12 +1,14 @@
-/* Group: 16 AED Smart Alarm - Monitoring Device
+/* Group: 16 AED Smart Alarm - Monitoring Device ver.CAM
  * Module: main
  * Description: This is the main program of our AED Monitoring Device with Camera. The purpose of this code is to send the
-                device's MAC and IP address to the base station's web server via wi-fi.
- * Collaborators: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
- * Author: - ESP32 Tutorials
- * Contact: - admin@esp32tutorials.com
- * Sources/URLs: - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
-                 - https://esp32tutorials.com/esp32-cam-esp-idf-live-streaming-web-server/#more-2787
+                device's MAC and IP address to the web server via HTTP request.
+ * Authors: Pei-Yu Huang, Shu-Yu Lin, Mohammad Kamal
+ * References:  - Espressif Official API References
+ *                  - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
+ *                  - https://github.com/espressif/esp-idf/tree/47852846d3e89580ef4da28210b6ffc1cb5eaa9d/examples
+ *              - ESP32 Tutorials (admin@esp32tutorials.com)
+ *                  - https://esp32tutorials.com/esp32-esp-idf-send-messages-whatsapp/
+ *                  - https://esp32tutorials.com/esp32-cam-esp-idf-live-streaming-web-server/#more-2787
  * Revision Information: V.0.0 (First Revision)
  * Date: 12/March/2023
  * Copyright: N/A
@@ -18,11 +20,10 @@
               - setup_server()
               - init_camera()
 */
-
 #include "monitoring_device.h"
 #include "wifi_include.h"
 #include "camera_include.h"
-
+/* Defining TAG name for debugging */
 static const char *TAG = "Main";
 
 void setup_nvs(void) {
