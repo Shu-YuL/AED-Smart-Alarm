@@ -14,8 +14,6 @@
  * Copyright: N/A
  * Functions: - setup_nvs(void)
               - connect_wifi()
-              - initialize_wifi()
-              - check_wifi()
               - get_MAC()
               - setup_server()
               - init_camera()
