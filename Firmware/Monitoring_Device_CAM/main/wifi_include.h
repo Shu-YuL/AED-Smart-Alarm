@@ -1,10 +1,6 @@
-#define HOME // define UWS if you are on campus; HOME if off campus
-
 /* Include Guard */
 #ifndef WIFI_INCLUDE_H
 #define WIFI_INCLUDE_H
-
-#ifdef HOME
 
 #include <stdio.h>
 #include <string.h>
@@ -38,5 +34,4 @@
 /* function prototypes */
 void connect_wifi(void);
 
-#endif
 #endif

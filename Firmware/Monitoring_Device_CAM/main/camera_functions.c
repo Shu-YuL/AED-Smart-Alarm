@@ -73,6 +73,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     uint8_t * _jpg_buf;
     char * part_buf[64];
     static int64_t last_frame = 0;
+    
     if(!last_frame) {
         last_frame = esp_timer_get_time();
     }

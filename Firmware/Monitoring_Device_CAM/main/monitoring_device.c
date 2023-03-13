@@ -69,8 +69,6 @@ void myMACto_GS(void *parameters)
     if (strcmp(http_response,"Accepted") == 0)
     {
         ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
-
-        enter_deep_sleep(); // go to sleep if http request is accepted
     }
     else if (strcmp(http_response,"Paired") == 0)
     {
