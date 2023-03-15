@@ -9,7 +9,7 @@
 
 - Wifi
 - HTTP Client
-  - Door switch (currently using a button to simulate triggering behavioor) GPIO interrupt (Post device MAC addr to Google Sheet)
+  - Door switch (currently using a button to simulate triggering behavior) GPIO interrupt (Post device MAC addr to Google Sheet)
 - Camera Video Stream Server
 
 ### What's left
@@ -24,7 +24,7 @@ Remember to enter your WiFi **```SSID```** and **```Password```** in **```menuco
 
 VS Code: CTRL+SHIFT+P -> search "ESP-IDF: SDK Configuration Editor" -> look for "Application Configuration" -> type in SSID and Password -> Save -> Build & Flash)
 
-**Only pushes the same files back to the Repository** as other folders are associated with your own PC enviornment (ex: your ESP-IDF path) which is different from other perople's enviornment.
+**Only pushes the same files back to the Repository** as other folders are associated with your own PC environment (ex: your ESP-IDF path) which is different from other people's environment.
 
 ## Pinout
 

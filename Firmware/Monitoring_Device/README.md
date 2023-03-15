@@ -8,7 +8,7 @@
 
 - Wifi
 - HTTP Client
-  - Door switch (currently using a button to simulate triggering behavioor) GPIO interrupt (Post device MAC addr to Google Sheet)
+  - Door switch (currently using a button to simulate triggering behavior) GPIO interrupt (Post device MAC addr to Google Sheet)
 - Deep Sleep
 
 ### What's left
@@ -27,7 +27,7 @@ VS Code: CTRL+SHIFT+P -> search "ESP-IDF: SDK Configuration Editor" -> look for 
 
 Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for campus internet.
 
-**Only pushes the same files back to the Repository** as other folders are associated with your own PC enviornment (ex: your ESP-IDF path) which is different from other perople's enviornment.
+**Only pushes the same files back to the Repository** as other folders are associated with your own PC environment (ex: your ESP-IDF path) which is different from other people's environment.
 
 ## Pinout
 
@@ -37,6 +37,6 @@ Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for 
 
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
-Lead 1 - PIN 25 INPUT, PULLDOWN, POS EDGE TRIGGER
+Lead 1 - PIN 25 INPUT, PULLDOWN, Low level wake up
 
 Lead 2 - 3.3V
