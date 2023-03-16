@@ -19,7 +19,7 @@
 #define TIMER_PERIOD_MS 5000 // timer counting duration
 #define TASK_STACK_SIZE 8192 // HTTP request task stack size
 
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbxsAbE5cSaN_FxcQm5Xzc2TBPFxaeiWPxaeHIKdNlzQo_26Sp90bPTuTgN7Vf7Q7_4tzg/exec?read"
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyuEgUnHg0i9GBASJlgf9Dq3rZfcz2YzQEOmr_c9lpCkNFMJ6ZqpxVHrWF_gMansXzjsQ/exec?read"
 #define LOC_MAX_LEN 20
 
 #define Clear_PIN 22 // Clear button IO pin number 22
