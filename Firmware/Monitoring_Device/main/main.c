@@ -166,5 +166,6 @@ void app_main(void)
     #endif
     
     get_MAC(); /* Function call to get device's MAC address*/
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     xTaskCreate(myMACto_GS, "Send MAC address to Base Station", 8192, &my_MAC, 4, &alert_msg_Handle); /* Call subroutine to send MAC address to base station */
 }

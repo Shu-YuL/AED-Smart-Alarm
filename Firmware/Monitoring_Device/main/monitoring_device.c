@@ -12,7 +12,7 @@ QueueHandle_t interputQueue;
  * Subroutine Name: client_event_get_handler
  * Description: HTTP Client event handler. Used here to retrieve HTTP request response.
  * Input: evt
- * Output: ESP_OK return if successfully retrives HTTP response
+ * Output: ESP_OK return if successfully retrieves HTTP response
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 
@@ -67,13 +67,13 @@ void myMACto_GS(void *parameters)
     /* Check HTTP response */
     if (strcmp(http_response,"Accepted") == 0)
     {
-        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
-
+        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
+        
         enter_deep_sleep(); // go to sleep if http request is accepted
     }
     else if (strcmp(http_response,"Paired") == 0)
     {
-        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
+        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
     }
     else
     {
@@ -85,6 +85,8 @@ void myMACto_GS(void *parameters)
             retry++;
         }
         else ESP_LOGI(TAG,"Reached Maximum retry"); /* Error message */
+
+        enter_deep_sleep(); //  go to sleep if reached max retries
     }
 
     esp_http_client_cleanup(client); /* Operation is complete */
@@ -115,7 +117,7 @@ void configure_sleep(void) {
  
     printf("Configuring EXT0 wakeup on GPIO pin %d\n", WAKEUP_PIN);
 
-    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(WAKEUP_PIN, 1)); //WAKEUP_PIN used as interrupt to wake up from deep sleep
+    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(WAKEUP_PIN, 0)); //WAKEUP_PIN used as interrupt to wake up from deep sleep, wake up level = low
 
     // Configure pullup/downs via RTCIO to tie wakeup pins to inactive level during deep sleep.
     // EXT0 resides in the same power domain (RTC_PERIPH) as the RTC IO pullup/downs.
