@@ -27,7 +27,7 @@
 #define HTTP_RESPONSE_LEN 10
 #define ESP_INR_FLAG_DEFAULT 0
 /* web server URL to perform HTTP request */
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyuEgUnHg0i9GBASJlgf9Dq3rZfcz2YzQEOmr_c9lpCkNFMJ6ZqpxVHrWF_gMansXzjsQ/exec?MAC=%s"
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbw_xZIRQbZ2CVw4Qh_JAPOqhXy6XPgs0BYqGGMt2zvEElzEetMWkGOyVf_LmU3XIHQ9Ug/exec?MAC=%s"
 
 #define WAKEUP_PIN 25
 

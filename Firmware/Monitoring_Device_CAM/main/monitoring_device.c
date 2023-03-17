@@ -14,7 +14,7 @@ TaskHandle_t alert_msg_Handle = NULL;
  * Subroutine Name: client_event_get_handler
  * Description: HTTP Client event handler. Used here to retrieve HTTP request response.
  * Input: evt
- * Output: ESP_OK return if successfully retrives HTTP response
+ * Output: ESP_OK return if successfully retrieves HTTP response
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
@@ -68,11 +68,11 @@ void myMACto_GS(void *parameters)
     /* Check HTTP response */
     if (strcmp(http_response,"Accepted") == 0)
     {
-        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
+        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
     }
     else if (strcmp(http_response,"Paired") == 0)
     {
-        ESP_LOGI(TAG,"HTTP GET Request Successed. Response: %s",http_response);
+        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
     }
     else
     {

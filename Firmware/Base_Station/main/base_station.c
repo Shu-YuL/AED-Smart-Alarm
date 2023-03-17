@@ -1,9 +1,11 @@
 #include "base_station.h"
 #include "HD44780.h"
+#include "Buzzer_include.h"
 
 static const char *TAG = "Base_station";
 
 char Location_str[LOC_MAX_LEN];
+char temp_str[LOC_MAX_LEN]; // buffer for storing the last location value
 bool Clear_flag = false; // flag for http request
 
 QueueHandle_t interputQueue;
@@ -14,7 +16,23 @@ esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
     switch (evt->event_id)
     {
     case HTTP_EVENT_ON_DATA:
+        /* if received data len exceed acceptable length, discard the data */
         if (evt->data_len > LOC_MAX_LEN) break;
+        /* create buffer to store new location value */
+        char temp_buffer[LOC_MAX_LEN] = {'\0'};
+        sprintf(temp_buffer,"%.*s", evt->data_len, (char *)evt->data);
+        /* if the new location string is different from the previous one */
+        if (strcmp(temp_str,temp_buffer) != 0)
+        {
+            /* update temp_str to store the new location value */
+            sprintf(temp_str, "%s", temp_buffer);
+            /* new location, so turn on the buzzer output */
+            ledc_timer_resume(LEDC_MODE, LEDC_CHANNEL);
+            ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
+            ESP_LOGI(TAG, "LEDC Resumed, buzzer output ON");
+        }
+
+        /* update Location_str to the new location value */
         sprintf(Location_str,"%.*s", evt->data_len, (char *)evt->data);
         ESP_LOGI(TAG, "Location: %s",Location_str);
 
@@ -56,7 +74,14 @@ void http_get_task(void *pvParameters)
 
     /* if Location_str is a empty string (no event occurred) */
     if (strcmp(Location_str,"\0") == 0)
+    {
         LCD_Secured(); // LCD secured mode
+
+        /* turn off the buzzer output */
+        ledc_stop(LEDC_MODE, LEDC_CHANNEL,0);
+        ledc_timer_pause(LEDC_MODE, LEDC_CHANNEL);
+        ESP_LOGI(TAG, "LEDC stopped, buzzer output OFF");
+    }
 
     memset(Location_str,0,sizeof(Location_str)); // Clear Location_str
 

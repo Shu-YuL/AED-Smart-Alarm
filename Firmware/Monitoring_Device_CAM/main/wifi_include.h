@@ -18,14 +18,14 @@
 #include "esp_netif.h"
 
 #define WIFI_MODE 0
-#define WIFI_SSID CONFIG_ESP_WIFI_SSID
-#define WIFI_PASSWORD CONFIG_ESP_WIFI_PASSWORD //enter network password
+#define WIFI_SSID "ssid" //enter network ssid
+#define WIFI_PASSWORD "password" //enter network password
 
 #define WIFI_EAP_METHOD 0 //following is to be used once working WPA2 example is integrated 
 #define WIFI_EAP_ID 0
 #define WIFI_EAP_USERNAME 0
 #define WIFI_EAP_PASSWORD 0
-#define WIFI_MAX_TRIES CONFIG_ESP_MAXIMUM_RETRY
+#define WIFI_MAX_TRIES 10
 #define WIFI_AUTHORIZATION_MODE_THRESHOLD  WIFI_AUTH_OPEN //The weakest authmode allowed of the AP
 
 #define WIFI_CONNECTED_BIT BIT0

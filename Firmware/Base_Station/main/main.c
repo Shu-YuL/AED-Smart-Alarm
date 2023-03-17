@@ -1,9 +1,43 @@
+/* Group: 16 AED Smart Alarm - Base Station
+ * Module: main
+ * Description: This is the main program of our AED Base Station. The purpose of this code is to retrieves the
+                triggering device's location (if any) from the web server via HTTP request.
+ * Authors: Shu-Yu Lin, Pei-Yu Huang, Mohammad Kamal
+ * References:  - Espressif Official API References
+ *                  - https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
+ *                  - https://github.com/espressif/esp-idf/tree/47852846d3e89580ef4da28210b6ffc1cb5eaa9d/examples
+ * Revision Information: V.0.0 (First Revision)
+ * Date: 17/March/2023
+ * Copyright: N/A
+ * Functions: - LCD_init()
+              - LCD_home()
+              - LCD_clearScreen()
+              - LCD_Secured()
+              - setup_nvs(void)
+              - connect_wifi()
+              - initialize_wifi()
+              - check_wifi()
+              - Clear_button()
+              - buzzer_pwm_init()
+              - Buzzer_button_config()
+*/
 #include "wifi_include.h"
 #include "UWS_include.h"
 #include "HD44780.h"
 #include "base_station.h"
-
+#include "Buzzer_include.h"
+/* Defining TAG name for debugging */
 static const char *TAG = "Main";
+
+void setup_nvs(void) {
+    //Initializes NVS
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+}
 
 #ifdef UWS
 
@@ -127,21 +161,28 @@ void app_main(void)
     LCD_clearScreen(); /* This function is called to clear the current screen */
     LCD_Secured();
 
-    #ifdef HOME // if using wifi off campus
     setup_nvs();
+
+    #ifdef HOME // if using wifi off campus or on campus DevNet
     connect_wifi();
     #endif
 
     #ifdef UWS // if using UWS wifi
-    ESP_ERROR_CHECK( nvs_flash_init() );
     initialize_wifi();
     check_wifi();
     #endif
 
-    /* 5s timer interrupt task */
+    /* recurring 5s timer interrupt task for pulling data from web server */
     TimerHandle_t timer = xTimerCreate("timer", pdMS_TO_TICKS(TIMER_PERIOD_MS), pdTRUE, 0, timer_callback);
-    xTimerStart(timer, 0);
+    xTimerStart(timer, 0); // start the timer
     
     /* Clear button GPIO interrupt setup */
     Clear_button();
+
+    /* Buzzer output setup */
+    buzzer_pwm_init();
+    // Set duty to 50%
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, LEDC_DUTY));
+    /* Buzzer button GPIO interrupt setup */
+    Buzzer_button_config();
 }

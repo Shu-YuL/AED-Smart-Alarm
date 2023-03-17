@@ -308,15 +308,6 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # Application Configuration
 #
-
-#
-# WiFi Configuration
-#
-CONFIG_ESP_WIFI_SSID="myssid"
-CONFIG_ESP_WIFI_PASSWORD="mypassword"
-CONFIG_ESP_MAXIMUM_RETRY=5
-# end of WiFi Configuration
-
 # CONFIG_BOARD_WROVER_KIT is not set
 # CONFIG_BOARD_CAMERA_MODEL_ESP_EYE is not set
 CONFIG_BOARD_ESP32CAM_AITHINKER=y
