@@ -28,8 +28,10 @@
 #define HTTP_RESPONSE_LEN 10
 #define ESP_INR_FLAG_DEFAULT 0
 
-/* web server URL to perform HTTP request */
+/* Test URL to perform HTTP request */
 #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbw_xZIRQbZ2CVw4Qh_JAPOqhXy6XPgs0BYqGGMt2zvEElzEetMWkGOyVf_LmU3XIHQ9Ug/exec?MAC=%s&IP=%s"
+/* Official URL to perform HTTP request */
+// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbxnAvUE8XQpwAf718kz-y-cYoXuyO8_vQA_JkPIigX1hvvp-eYXa1a2UALOfbI0kn0/exec?MAC=%s&IP=%s"
 
 extern char my_MAC[MAC_length];
 extern char my_IP[IP_length];;

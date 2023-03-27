@@ -6,6 +6,8 @@
 
 --updated Mar 14, 2023 by Shu-Yu Lin
 
+--updated Mar 27, 2023 by Shu-Yu Lin
+
 Alarm messaging app channel links:
 
 [Telegram](https://t.me/+YDv_uXch1lFhM2Mx)
@@ -28,12 +30,12 @@ Our project consists of three main components. The first component is the alarm,
 
 ### Monitoring Device
 
-- Every monitoring device is powered by a 9V battery.
+- Every monitoring device is powered by batteries.
 - A door switch sensor is used to detect any motion of the cabinet door.
 - The activation of the switch sends a digital signal to wake up and trigger the device.
 - The development board used is ESP32-DevKitC V4.
 - When the MCU is active, it will try to connect to campus WiFi and sends its MAC address to the Google Sheet through an HTTP GET request.
-- The monitoring device will go back to sleep after it receives an acknowledgement flag from the Google Sheet.
+- The monitoring device will go back to sleep after it receives an acknowledgement from the Google Sheet.
 
 ### Base Station
 
@@ -42,18 +44,19 @@ Our project consists of three main components. The first component is the alarm,
 - An 2004 LCD display is mounted on the base station and connected to the MCU via the I²C interface.
 - LED bulbs are used and controlled via the MCU's digital output signal. Similarly, a piezoelectric buzzer is also used and controlled via PWM signals from the MCU.
 - The base station is to be connected to campus Wifi and pull data from the Google Sheet every 10 seconds through sending an HTTP GET request. It receives an empty message when no monitoring device is triggered. If any of the monitoring devices are triggered, it receives a string showing the location of this monitoring device and then activates buzzer, LED, and also displays alert message on the LCD display.
-- Users can interact with the base station with onboard pushbuttons. One pushbutton labeled "Clear" is used to dismiss an alert event.
+- Users can interact with the base station with onboard pushbuttons. One pushbutton labeled "Clear" is used to dismiss an alert event, while the other one is used to turn off the buzzer.
 
 ### Google Sheet
 
 - Serves as a Web Server and online User Interface for the project
 - Manages HTTP Requests and data sent from both the Base Station and the Monitoring Devices
-- Provides an in-services device list that can be managed by the user
+- Provides an paired device list that can be managed by the user
 - Provides an Event Log sheet that records all triggering events along with triggered date and time of each event
-- Sends Email, and make announcements to Telegram and Discord channel when an event is triggered
+- Sends notifications through email, Telegram and Discord channel when an event is triggered or cleared
+- Sends notifications through email, Telegram and Discord channel when a prospect low battery is detected
 
-The project firmware is developed in C language using ESP-IDF. The Google Sheet is managed using Google Apps Script.
+The project firmware is developed in C language using ESP-IDF. The Google Sheet is managed using Google Apps Script which the script is developed in JavaScript.
 
 ## Usage of this Repository
 
-This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system. It includes details of the components used, such as the microcontroller, door switch, LCD display, LED bulb and piezoelectric buzzer.
+This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system.
