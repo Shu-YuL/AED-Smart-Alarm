@@ -16,7 +16,7 @@
 */
 
 /* opens the Google Sheet and retrieves the three sheets within the workbook */
-var sheet_id = "19i2qg0TGJO1N6cCLGYWdo-QeKgpIOH8kQx0BYBLzYfQ"; // Google Sheet ID
+var sheet_id = "XXX"; // Google Sheet ID
 var ss = SpreadsheetApp.openById(sheet_id);
 var paired_sheet = ss.getSheetByName("Paired_devices");
 var triggered_sheet = ss.getSheetByName("Triggered_devices");
@@ -213,8 +213,8 @@ function doGet(e)
 
 /* send notification to Telegram Channel */
 function sendTelegramMessage(text) {
-  var botToken = "6046100569:AAFzVaJ7RYmmCdNjJeXyYoPPKKyXGvnAMSY"; // the Telegram bot's token that we created
-  var chatId = "-1001818576640"; // the Telegram channel ID that we created
+  var botToken = "XXX"; // the Telegram bot's token that we created
+  var chatId = "XXX"; // the Telegram channel ID that we created
   var url = "https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(text);
   var response = UrlFetchApp.fetch(url); // performs HTTP request to send out the message
   return response;
@@ -223,7 +223,7 @@ function sendTelegramMessage(text) {
 /* send notification to Discord Channel */
 function sendToDiscord(message) {
   /* Discord Channel Webhook url */
-  const url = "https://discord.com/api/webhooks/1074549488200450078/JJyRjf4SA_Ei3eECzZW-8kD02Ca6oQdiG38obF7wt3nCbJIDrOO6B1PD5lIASeXKEINO"
+  const url = "https://discord.com/api/webhooks/XXX"
   const formTEXT = {
     content: message
   }
