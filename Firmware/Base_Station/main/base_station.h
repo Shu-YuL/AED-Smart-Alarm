@@ -22,7 +22,7 @@
 /* Test URL to perform HTTP request */
 #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbw_xZIRQbZ2CVw4Qh_JAPOqhXy6XPgs0BYqGGMt2zvEElzEetMWkGOyVf_LmU3XIHQ9Ug/exec?read"
 /* Official URL to perform HTTP request */
-// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbxnAvUE8XQpwAf718kz-y-cYoXuyO8_vQA_JkPIigX1hvvp-eYXa1a2UALOfbI0kn0/exec?read"
+// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbwg-Pdfsv0ajlMBZt9fKIaUvXdk5ZQ9gLY340Hok5p6gOkZqaKtxe1wnxDv5WY0wGbr/exec?read"
 
 #define LOC_MAX_LEN 20
 
