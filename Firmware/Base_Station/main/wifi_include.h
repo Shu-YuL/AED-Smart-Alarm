@@ -26,9 +26,9 @@
 #define WIFI_PASSWORD "password" //enter network password
 
 #define WIFI_EAP_METHOD 0 //following is to be used once working WPA2 example is integrated 
-#define WIFI_EAP_ID 0
-#define WIFI_EAP_USERNAME 0
-#define WIFI_EAP_PASSWORD 0
+//#define WIFI_EAP_ID 0
+//#define WIFI_EAP_USERNAME 0
+//#define WIFI_EAP_PASSWORD 0
 #define WIFI_MAX_TRIES 10
 #define WIFI_AUTHORIZATION_MODE_THRESHOLD  WIFI_AUTH_OPEN //The weakest authmode allowed of the AP
 

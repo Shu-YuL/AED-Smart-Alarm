@@ -21,16 +21,25 @@
               - buzzer_pwm_init()
               - Buzzer_button_config()
 */
+
 #include "wifi_include.h"
 #include "UWS_include.h"
 #include "HD44780.h"
 #include "base_station.h"
 #include "Buzzer_include.h"
+
 /* Defining TAG name for debugging */
 static const char *TAG = "Main";
 
+
+/*------------------------------------------
+Function Name: setup_nvs()
+Description: Initializes and clears the NVS in the ESP32.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void setup_nvs(void) {
-    //Initializes NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
       ESP_ERROR_CHECK(nvs_flash_erase());
@@ -51,27 +60,14 @@ static esp_netif_t *sta_netif = NULL;
 const int wifi_connected = BIT0; //flag indicating whether or not we are connnected to wifi
 
 
-#ifdef INCLUDE_CA_FILES
-/* CA cert, taken from ca.pem
-   Client cert, taken from client.crt
-   Client key, taken from client.key
-
-   The PEM, CRT and KEY file were provided by the person or organization
-   who configured the AP with wpa2 enterprise.
-
-   To embed it in the app binary, the PEM, CRT and KEY file is named
-   in the component.mk COMPONENT_EMBED_TXTFILES variable.
-*/
-
-extern uint8_t ca_pem_start[] asm("_binary_ca_pem_start");
-extern uint8_t ca_pem_end[]   asm("_binary_ca_pem_end");
-
-
-extern uint8_t client_crt_start[] asm("_binary_client_crt_start");
-extern uint8_t client_crt_end[]   asm("_binary_client_crt_end");
-extern uint8_t client_key_start[] asm("_binary_client_key_start");
-extern uint8_t client_key_end[]   asm("_binary_client_key_end");
-#endif
+/*------------------------------------------
+Function Name: wifi_event_handler()
+Description: Event handler function for using WPA2 WiFi networks like UWS. Calls esp_wifi_connect() 
+             to connect to WiFi if we start WiFi or WiFi disconnects.
+Input: esp_event_base_t event, int32_t event_id, event_data
+Output: N/A
+Variables Affected: wifi_connected
+-------------------------------------------*/
 
 static void wifi_event_handler(void* arg, esp_event_base_t event, int32_t event_id, void* event_data) {
     
@@ -85,15 +81,16 @@ static void wifi_event_handler(void* arg, esp_event_base_t event, int32_t event_
     }
 }
 
+/*------------------------------------------
+Function Name: initialize_wifi()
+Description: Sets up ESP32 as a WiFi station and configures parameters such as ssid and password, and starts WiFi.
+             Used for WPA2 networks like UWS.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
+/* sets up wifi parameters and starts attempt to connect to wifi  */
 static void initialize_wifi(void) {
-
-    #ifdef INCLUDE_CA_FILES
-    unsigned int ca_pem_bytes = ca_pem_end - ca_pem_start;
-
-    unsigned int client_crt_bytes = client_crt_end - client_crt_start;
-    unsigned int client_key_bytes = client_key_end - client_key_start;
-    #endif
-
 
     ESP_ERROR_CHECK(esp_netif_init());
     wifi_event_group = xEventGroupCreate();
@@ -123,7 +120,14 @@ static void initialize_wifi(void) {
     ESP_ERROR_CHECK( esp_wifi_start() );
 }
 
-
+/*------------------------------------------
+Function Name: check_wifi()
+Description: Checks WiFi connection status and retrieves details such as ssid, ip address and mac address if connected to a WiFi network.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
+/* function to check wifi connection status and details of wifi connection */
 static void check_wifi(void)
 {
     esp_netif_ip_info_t ip_info;
@@ -134,13 +138,13 @@ static void check_wifi(void)
     esp_err_t connection_status = ESP_ERR_WIFI_NOT_CONNECT;
     esp_netif_get_ip_info(sta_netif, &ip_info);
 
-    while ((ip_info.ip.addr) == 0) {
+    while ((ip_info.ip.addr) == 0) { // keep checking connection status and waiting until ip address received, indicating a successful connection 
         vTaskDelay(2000 / portTICK_PERIOD_MS);
         connection_status = esp_wifi_sta_get_ap_info(&ap_info);
         esp_netif_get_ip_info(sta_netif, &ip_info);
     }
 
-    if (esp_netif_get_ip_info(sta_netif, &ip_info) == ESP_OK) {
+    if (esp_netif_get_ip_info(sta_netif, &ip_info) == ESP_OK) { // print wifi connection parameters 
         ESP_LOGI(TAG, "-----------------------");
         ESP_LOGI(TAG, "SSID: %s", ap_info.ssid);
         ESP_LOGI(TAG, "IP Address: "IPSTR, IP2STR(&ip_info.ip));
@@ -153,6 +157,16 @@ static void check_wifi(void)
 
 #endif
 
+
+
+/*------------------------------------------
+Function Name: app_main()
+Description: Main program that sets up the base station. 
+            Sets up the LCD and buttons, creates a 5s timer interrupt to continously request data from Google Apps web server and starts WiFi.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void app_main(void)
 {
     LCD_init(LCD_ADDR, SDA_PIN, SCL_PIN, LCD_COLS, LCD_ROWS); /* Initializing LCD parameters */

@@ -53,6 +53,14 @@ static void LCD_writeNibble(uint8_t nibble, uint8_t mode);
 static void LCD_writeByte(uint8_t data, uint8_t mode);
 static void LCD_pulseEnable(uint8_t nibble);
 
+
+/*------------------------------------------
+Function Name: I2C_init()
+Description: Intiializes I2C on the the desired pins given by the macros SDA_pin, SCL_pin.
+Input: N/A
+Output: error code of type esp_err_t
+Variables Affected: N/A
+-------------------------------------------*/
 static esp_err_t I2C_init(void)
 {
     i2c_config_t conf = {
@@ -68,6 +76,14 @@ static esp_err_t I2C_init(void)
     return ESP_OK;
 }
 
+
+/*------------------------------------------
+Function Name: LCD_init()
+Description: Initializes the LCD screen, clears the screen and setups the LCD to begin printing. 
+Inputs: addr, dataPin, clockPin, cols, rows
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_init(uint8_t addr, uint8_t dataPin, uint8_t clockPin, uint8_t cols, uint8_t rows)
 {
     LCD_addr = addr;
@@ -103,6 +119,15 @@ void LCD_init(uint8_t addr, uint8_t dataPin, uint8_t clockPin, uint8_t cols, uin
     LCD_writeByte(LCD_DISPLAY_ON, LCD_COMMAND);                         // Ensure LCD is set to on
 }
 
+
+/*------------------------------------------
+Function Name: LCD_setCursor()
+Description: Moves the cursor to the location (row,col) specified by the inputs row and col. 
+             Call this function to print a character at a desired location.
+Inputs: col, row
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_setCursor(uint8_t col, uint8_t row)
 {
     if (row > LCD_rows - 1) {
@@ -113,11 +138,27 @@ void LCD_setCursor(uint8_t col, uint8_t row)
     LCD_writeByte(LCD_SET_DDRAM_ADDR | (col + row_offsets[row]), LCD_COMMAND);
 }
 
+
+/*------------------------------------------
+Function Name: LCD_writeChar()
+Description: Prints a single character on the LCD screen.
+Input: c => ASCII character to print
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_writeChar(char c)
 {
-    LCD_writeByte(c, LCD_WRITE);                                        // Write data to DDRAM
+    LCD_writeByte(c, LCD_WRITE); // Write data to DDRAM
 }
 
+
+/*------------------------------------------
+Function Name: LCD_writeStr()
+Description: Prints a string of characters on the LCD screen.
+Input: str => pointer to string to print.
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_writeStr(char* str)
 {
     while (*str) {
@@ -125,18 +166,43 @@ void LCD_writeStr(char* str)
     }
 }
 
+
+/*------------------------------------------
+Function Name: LCD_home()
+Description: 
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_home(void)
 {
     LCD_writeByte(LCD_HOME, LCD_COMMAND);
-    vTaskDelay(2 / portTICK_PERIOD_MS);                                   // This command takes a while to complete
+    vTaskDelay(2 / portTICK_PERIOD_MS);   // This command takes a while to complete
 }
 
+
+/*------------------------------------------
+Function Name: LCD_clearScreen()
+Description: Completely clears the LCD screen. Waits 2s to allow screen to finish clearing.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_clearScreen(void)
 {
     LCD_writeByte(LCD_CLEAR, LCD_COMMAND);
-    vTaskDelay(2 / portTICK_PERIOD_MS);                                   // This command takes a while to complete
+    vTaskDelay(2 / portTICK_PERIOD_MS);   // This command takes a while to complete
 }
 
+
+/*------------------------------------------
+Function Name: LCD_writeNibble()
+Description: Writes a nibble of data to the LCD controller via I2C.
+Inputs: nibble => nibble of data to write to LCD
+       mode
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 static void LCD_writeNibble(uint8_t nibble, uint8_t mode)
 {
     uint8_t data = (nibble & 0xF0) | mode | LCD_BACKLIGHT;
@@ -148,15 +214,33 @@ static void LCD_writeNibble(uint8_t nibble, uint8_t mode)
     ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM_0, cmd, 1000/portTICK_PERIOD_MS));
     i2c_cmd_link_delete(cmd);   
 
-    LCD_pulseEnable(data);                                              // Clock data into LCD
+    LCD_pulseEnable(data); // Clock data into LCD
 }
 
+
+/*------------------------------------------
+Function Name: LCD_writeByte()
+Description: Writes a full byte of data to the LCD controller by writing the upper and lower nibble of data 
+             as two transactions using LCD_writeNibble().
+Inputs: data => byte of data to write to LCD
+        mode
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 static void LCD_writeByte(uint8_t data, uint8_t mode)
 {
     LCD_writeNibble(data & 0xF0, mode);
     LCD_writeNibble((data << 4) & 0xF0, mode);
 }
 
+
+/*------------------------------------------
+Function Name: LCD_pulseEnable()
+Description: 
+Input: data
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 static void LCD_pulseEnable(uint8_t data)
 {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -178,10 +262,17 @@ static void LCD_pulseEnable(uint8_t data)
     ets_delay_us(500);
 }
 
-/* This function will print any character to the LCD display. The first argument is the x position,
-the second argument is the y position, the third argument is whatever you wanna write to the OLED display,
-the fourth argument is an integer (if no integer -> write NA), the last argument is a string of characters
-(if no string -> write NA). Please include " " for the third argument */
+
+/*------------------------------------------
+Function Name: ()
+Description: This function will print any characters to the LCD display. The first argument is the x position,
+             the second argument is the y position, the third argument is whatever you wanna write to the OLED display,
+             the fourth argument is an integer (if no integer -> write NA), the last argument is a string of characters
+             (if no string -> write NA). Please include " " for the third argument.
+Inputs: x_position, y_position, txt, var, message
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void LCD_printf(uint8_t x_position, uint8_t y_position, char txt[], uint8_t var, char message[])
 {
     char txtBuf[8];
