@@ -26,7 +26,7 @@ In **```wifi_include.h```**, the first line ``` #define ... ```, please enter ``
 
 Remember to enter your WiFi **```SSID```** and **```Password```** in **```wifi_include.h```** for home internet. Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for campus internet.
 
-**Only pushes the same files back to the Repository** as other folders are associated with your own PC environment (ex: your ESP-IDF path) which is different from other people's environment.
+**Only pushes the same files back to the Repository** as other folders are associated with your own PC enviornment (ex: your ESP-IDF path) which is different from other perople's enviornment.
 
 ## Pinout
 
