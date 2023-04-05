@@ -15,7 +15,6 @@ QueueHandle_t interputQueue;
  * Output: ESP_OK return if successfully retrieves HTTP response
  * Registers Affected: N/A
  ----------------------------------------------------------------------------------------- */
-
 esp_err_t client_event_get_handler(esp_http_client_event_handle_t evt)
 {
     switch (evt->event_id)
@@ -110,6 +109,7 @@ void get_MAC(void)
     esp_read_mac(mac_base, ESP_MAC_WIFI_STA);
 
     sprintf(my_MAC, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0],mac_base[1],mac_base[2],mac_base[3],mac_base[4],mac_base[5]);
+    printf("MAC address: %s\n", my_MAC);
 }
 
 /* call configure_sleep() near the beginning of app_main() */

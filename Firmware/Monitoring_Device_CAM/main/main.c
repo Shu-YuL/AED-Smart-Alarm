@@ -24,6 +24,13 @@
 /* Defining TAG name for debugging */
 static const char *TAG = "Main";
 
+/*------------------------------------------
+Function Name: setup_nvs()
+Description: Initializes and clears the NVS in the ESP32.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void setup_nvs(void) {
     //Initializes NVS
     esp_err_t ret = nvs_flash_init();
@@ -34,6 +41,13 @@ void setup_nvs(void) {
     ESP_ERROR_CHECK(ret);
 }
 
+/*------------------------------------------
+Function Name: app_main()
+Description: Main program that sets up the Monitoring Device. 
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void app_main(void)
 {
     esp_err_t err;

@@ -2,6 +2,8 @@
 
 static const char *TAG = "WIFI";
 
+/* Description: This file contains functions specifically for establishing a WiFi connection to a standard, non-WPA2 WiFi network like DevNet or a home network*/
+
 #ifdef HOME
 
 /* FreeRTOS event group to signal when wifi is connected*/
@@ -9,6 +11,14 @@ static EventGroupHandle_t s_wifi_event_group;
 
 static int s_retry_num = 0;
 
+/*------------------------------------------
+Function Name: event_handler()
+Description: FreeRTOS event handler to indicate when WiFi is connected. 
+             Retries to connect to a WiFi access point upto WIFI_MAX_TRIES, and prints IP address of network when successful.
+Input: arg, event_base, event_id, event_data
+Output: N/A
+Variables Affected: s_retry_num, s_wifi_event_group
+-------------------------------------------*/
 static void event_handler(void *arg, esp_event_base_t event_base,
                           int32_t event_id, void *event_data)
 {
@@ -39,6 +49,14 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+/*------------------------------------------
+Function Name: connect_wifi()
+Description: Sets up ESP32 as a WiFi station and configures parameters such as ssid and password, and starts WiFi.
+             Connects to a regular WiFi network like a home network or DevNet and indicates connection status.
+Input: N/A
+Output: N/A
+Variables Affected: N/A
+-------------------------------------------*/
 void connect_wifi(void)
 {
     s_wifi_event_group = xEventGroupCreate();

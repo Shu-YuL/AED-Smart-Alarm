@@ -1,8 +1,11 @@
 # Base Station
 
 -- updated March 1, 2023 by Shu-Yu Lin
+
 -- updated March 17, 2023 by Shu-Yu Lin
+
 -- updated April 4, 2023 by Mohammad Kamal
+
 ## Development Progress
 
 ### What's ready
@@ -19,7 +22,7 @@
 
 Pull the **```Base_Station```** folder to your local folder and copy and paste these files to your local project folder and build from there.
 
-In **```wifi_include.h```**, the first line ``` #define ... ```, please enter ``` HOME ``` if you are off campus or using on campus DevNet WiFi, ``` UWS ``` if you are on campus.
+In **```wifi_include.h```**, the first line ``` #define ... ```, please enter ``` HOME ``` if you are off campus or using on campus **```DevNet```** WiFi, ``` UWS ``` if you are on campus.
 
 Remember to enter your WiFi **```SSID```** and **```Password```** in **```wifi_include.h```** for home internet. Enter your **```CCID```** and **```Password```** in **```UWS_include.h```** for campus internet.
 

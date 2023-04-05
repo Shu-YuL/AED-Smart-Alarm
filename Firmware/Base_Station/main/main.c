@@ -127,7 +127,6 @@ Input: N/A
 Output: N/A
 Variables Affected: N/A
 -------------------------------------------*/
-/* function to check wifi connection status and details of wifi connection */
 static void check_wifi(void)
 {
     esp_netif_ip_info_t ip_info;
@@ -156,8 +155,6 @@ static void check_wifi(void)
 }
 
 #endif
-
-
 
 /*------------------------------------------
 Function Name: app_main()
