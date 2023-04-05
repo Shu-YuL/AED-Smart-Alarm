@@ -12,20 +12,6 @@
 
 ----------------------------------------------------------------
 
-Alarm messaging app channel invite links:
-
-[Telegram](https://t.me/+YDv_uXch1lFhM2Mx)
-
-[Discord](https://discord.gg/8R3kqmZn9D)
-
-## DevNet Access Password Record
-
-(Need to register the device's MAC address first before granting access to DevNet)
-
-| Password |
-| ------------------|
-| SvSAxkQGy4PC7D37 |
-
 ## Introduction
 
 Our project aims to improve upon the current AED monitoring system used by the University of Alberta Emergency Management Team (UAEMT) and University of Alberta Protective Services (UAPS). The current system has issues with delays in receiving alerts and the need for frequent re-authentication. Our new system addresses these issues and provides more advanced notice for time-sensitive alerts, enabling UAPS to respond more quickly in case of a medical emergency.
