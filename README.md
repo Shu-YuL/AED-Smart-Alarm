@@ -8,7 +8,11 @@
 
 --updated Mar 27, 2023 by Shu-Yu Lin
 
-Alarm messaging app channel links:
+--updated Apr 4, 2023 by Shu-Yu Lin
+
+----------------------------------------------------------------
+
+Alarm messaging app channel invite links:
 
 [Telegram](https://t.me/+YDv_uXch1lFhM2Mx)
 
@@ -16,9 +20,11 @@ Alarm messaging app channel links:
 
 ## DevNet Access Password Record
 
-| Device Type | MAC               | Password         |
-|-------------|-------------------|------------------|
-| ESP32-CAM   | 7C:9E:BD:E3:96:10 | SvSAxkQGy4PC7D37 |
+(Need to register the device's MAC address first before granting access to DevNet)
+
+| Password |
+| ------------------|
+| SvSAxkQGy4PC7D37 |
 
 ## Introduction
 
@@ -59,4 +65,4 @@ The project firmware is developed in C language using ESP-IDF. The Google Sheet 
 
 ## Usage of this Repository
 
-This repository contains all the code, files such as the PCB layout and 3D models, and documentation for the AED Smart Alarm project. Please refer to the documentation for instructions on how to set up and use the system.
+This repository contains all the code, files such as the hardware design project, PCB layout and 3D models. Please refer to the documentation for instructions on how to set up and use the system.
