@@ -31,7 +31,7 @@
 /* Test URL to perform HTTP request */
 #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbw_xZIRQbZ2CVw4Qh_JAPOqhXy6XPgs0BYqGGMt2zvEElzEetMWkGOyVf_LmU3XIHQ9Ug/exec?MAC=%s&IP=%s"
 /* Official URL to perform HTTP request */
-// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbzvlYVE-ZD0Mnx6O66nkl0qABa-55gGkp9kKkSCbvlVWMOT6LVOGxDOGRBCmaPEciFR/exec?MAC=%s&IP=%s"
+// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbz00T8xuK0Al_jOZzJMmi17tDMMRb6GcCaSH8MJ2rD32jHkeRXG0UCwRyipQSP2xmRs/exec?MAC=%s&IP=%s"
 
 extern char my_MAC[MAC_length];
 extern char my_IP[IP_length];;
