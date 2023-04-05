@@ -22,8 +22,8 @@
 #include "esp_netif.h"
 
 #define WIFI_MODE 0
-#define WIFI_SSID "ssid" //enter network ssid
-#define WIFI_PASSWORD "password" //enter network password
+#define WIFI_SSID "DevNet" //enter network ssid
+#define WIFI_PASSWORD "SvSAxkQGy4PC7D37" //enter network password
 
 #define WIFI_EAP_METHOD 0 //following is to be used once working WPA2 example is integrated 
 //#define WIFI_EAP_ID 0

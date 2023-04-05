@@ -3,6 +3,7 @@
 -- updated March 9, 2023 by Shu-Yu Lin
 -- updated March 12, 2023 by Shu-Yu Lin
 -- updated March 17, 2023 by Shu-Yu Lin
+-- updated April 4, 2023 by Shu-Yu Lin
 
 ## Development Progress
 
@@ -12,10 +13,11 @@
 - HTTP Client
   - Door switch (currently using a button to simulate triggering behavior) GPIO interrupt (Post device MAC addr to Google Sheet)
 - Camera Video Stream Server
+- DevNet Access tested
 
 ### What's left
 
-- Devnet Access testing
+- None
 
 ## How to use
 
@@ -29,10 +31,10 @@ Remember to enter your WiFi **```SSID```** and **```Password```** in **```wifi_i
 
 (ESP32-CAM)
 
-### Door Switch (Currently PIN 18)
+### Door Switch (Currently PIN 13)
 
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
-Lead 1 - PIN 18 INPUT, PULLDOWN, POS EDGE TRIGGER
+Lead 1 - PIN 13 INPUT, PULLDOWN, POS EDGE TRIGGER
 
 Lead 2 - 3.3V

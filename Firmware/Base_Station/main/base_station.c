@@ -192,7 +192,7 @@ Variables Affected: N/A
 -------------------------------------------*/
 void Clear_button(void)
 {
-    gpio_pad_select_gpio(Clear_PIN);
+    esp_rom_gpio_pad_select_gpio(Clear_PIN);
     gpio_set_direction(Clear_PIN, GPIO_MODE_INPUT);
     gpio_pulldown_en(Clear_PIN);
     gpio_pullup_dis(Clear_PIN);

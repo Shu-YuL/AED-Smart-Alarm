@@ -96,7 +96,7 @@ Variables Affected: N/A
 -------------------------------------------*/
 void Buzzer_button_config(void)
 {
-    gpio_pad_select_gpio(Buzzer_but_PIN);
+    esp_rom_gpio_pad_select_gpio(Buzzer_but_PIN);
     gpio_set_direction(Buzzer_but_PIN, GPIO_MODE_INPUT);
     gpio_pulldown_en(Buzzer_but_PIN);
     gpio_pullup_dis(Buzzer_but_PIN);
