@@ -4,8 +4,8 @@
  * Authors: Shu-Yu Lin
  * References:  - Google Workspace Apps Script Guide
  *                  - https://developers.google.com/apps-script/guides/web
- * Revision Information: V.14.0
- * Date: 27/March/2023
+ * Revision Information: V.14.2
+ * Date: 5/April/2023
  * Copyright: N/A
  * Functions: - doGet(e)
               - sendTelegramMessage(text)
@@ -31,8 +31,8 @@ for (var i = 0; i < email_addrs.length; i++) {
 }
 recipient_emails = recipient_emails.join(","); // join the array values into a single string, values separated by ","
 
-var max_bat_count = 5; // the maximum number for the alarm to go off in one battery life
-var max_bat_service_time = 30; // the maximum number of days the battery can last
+var max_bat_count = 50; // the maximum number for the alarm to go off in one battery life
+var max_bat_service_time = 15; // the maximum number of days the battery can last
 
 var timerId = 0; // initialize video URL auto delete timer ID holder
 
@@ -74,12 +74,15 @@ function doGet(e)
         triggered_sheet.deleteRow(2);  // if Clear button is pressed, delete row 2
         log_sheet.appendRow([MAC,location,date,"Event Cleared by Base Station"]); // log the event
         /* --------- Send Email ----------- */
-        MailApp.sendEmail({
-        to: recipient_emails,
-        cc: "",
-        subject: "AED Smart Alarm - Event Cleared",
-        body: `The following Event was cleared by the Base Station:\n\nLocation: ${location} \nTime: ${date} \nDevice MAC: ${MAC} \n\nIf this was made by a mistake you can check the record on the Google Sheet.`
-        })
+        if (recipient_emails != ",,,,")
+        {
+          MailApp.sendEmail({
+          to: recipient_emails,
+          cc: "",
+          subject: "AED Smart Alarm - Event Cleared",
+          body: `The following Event was cleared by the Base Station:\n\nLocation: ${location} \nTime: ${date} \nDevice MAC: ${MAC} \n\nIf this was made by a mistake you can check the record on the Google Sheet.`
+          })
+        }
         /* send notification to Telegram Channel */
         sendTelegramMessage(`The following Event was cleared by the Base Station:\n\nLocation: ${location} \nTime: ${date} \nDevice MAC: ${MAC} \n\nIf this was made by a mistake you can check the record on the Google Sheet.`);
         /* send notification to Discord Channel */
@@ -149,7 +152,7 @@ function doGet(e)
         // Create a timer to run the clearFirstNonEmptyCell function after 5 minutes
         var timer = ScriptApp.newTrigger("clearFirstNonEmptyCell")
           .timeBased()
-          .after(1 * 60 * 1000) // after 1 mins (for testing and demo)
+          .after(5 * 60 * 1000) // after 5 mins
           .create();
 
         // Store timer ID in global variable
@@ -182,12 +185,15 @@ function doGet(e)
       }
 
       /* --------- Send Email ----------- */
-      MailApp.sendEmail({
-      to: recipient_emails,
-      cc: "",
-      subject: "AED Smart Alarm",
-      body: notif_body
-      })
+      if (recipient_emails != ",,,,")
+      {
+        MailApp.sendEmail({
+        to: recipient_emails,
+        cc: "",
+        subject: "AED Smart Alarm",
+        body: notif_body
+        })
+      }
       /* send notification to Telegram Channel */
       sendTelegramMessage(notif_body);
       /* send notification to Discord Channel */
@@ -278,17 +284,20 @@ function Check_BatteryService_Date()
         log_sheet.appendRow([MAC,location,currentDate,"Battery Service (Reached max number of days)"]); // log the event
 
         /* --------- Send Email ----------- */
-        MailApp.sendEmail({
-        to: recipient_emails,
-        cc: "",
-        subject: "AED Smart Alarm - Battery Check Reminder",
-        body: `The battery of the following device has not been replaced for a month, please pay attention to check the power.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches one month again.` //note the back-ticks ` ; they are not single quotation marks
-        })
+        if (recipient_emails != ",,,,")
+        {
+          MailApp.sendEmail({
+          to: recipient_emails,
+          cc: "",
+          subject: "AED Smart Alarm - Battery Check Reminder",
+          body: `The battery of the following device has not been replaced for a month, please pay attention to check the power.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches one month again.` //note the back-ticks ` ; they are not single quotation marks
+          })
+        }
 
         /* send notification to Telegram Channel */
-        sendTelegramMessage(`The battery of the following device has not been replaced for a month, please pay attention to check the power.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches one month again.`);
+        sendTelegramMessage(`The battery of the following device has not been replaced for 15 days, please pay attention to check the capacity.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches 15 days again.`);
         /* send notification to Discord Channel */
-        sendToDiscord(`\`\`\`The battery of the following device has not been replaced for a month, please pay attention to check the power.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches one month again.\`\`\``);
+        sendToDiscord(`\`\`\`The battery of the following device has not been replaced for 15 days, please pay attention to check the capacity.\n\nLocation: ${location} \nTime: ${currentDate} \nDevice MAC: ${MAC}\n\nPlease note that the timer on this device has now been reset and you will receive another reminder when the timer reaches 15 days again.\`\`\``);
       }
     }
   }

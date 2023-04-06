@@ -37,6 +37,6 @@ Remember to enter your WiFi **```SSID```** and **```Password```** in **```wifi_i
 
 ![Button image](https://www.projecthub.in/wp-content/uploads/2019/12/pushbutton_diagram.png)
 
-Lead 1 - PIN 25 INPUT, PULLDOWN, Low level wake up
+Lead 1 - PIN 25 INPUT, PULLDOWN, HIGH level wake up
 
 Lead 2 - 3.3V

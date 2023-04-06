@@ -45,7 +45,7 @@ void myMACto_GS(void *parameters)
 {
     char *device_MAC = (char *)parameters;
     char base_GS_url[] = HTTP_GET_URL;
-    int retry = 0;
+    int retry = 3;
 
     char BSURL[strlen(base_GS_url)]; /* Array of characters with the size of url */
     sprintf(BSURL, base_GS_url, device_MAC);
@@ -63,29 +63,32 @@ void myMACto_GS(void *parameters)
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_perform(client);
 
-    /* Check HTTP response */
-    if (strcmp(http_response,"Accepted") == 0)
+    while (retry)
     {
-        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
-        
-        enter_deep_sleep(); // go to sleep if http request is accepted
-    }
-    else if (strcmp(http_response,"Paired") == 0)
-    {
-        ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
-    }
-    else
-    {
-        ESP_LOGI(TAG,"HTTP GET Request Failed. Response: %s",http_response);
-        if (retry <= 5)
+        /* Check HTTP response */
+        if (strcmp(http_response,"Accepted") == 0)
         {
+            ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
+            
+            enter_deep_sleep(); // go to sleep if http request is accepted
+        }
+        else if (strcmp(http_response,"Paired") == 0)
+        {
+            ESP_LOGI(TAG,"HTTP GET Request Succeeded. Response: %s",http_response);
+            break;
+        }
+        else
+        {
+            ESP_LOGI(TAG,"HTTP GET Request Failed. Response: %s",http_response);
             /* retry http request */
             esp_http_client_perform(client);
-            retry++;
+            retry--;
+            if (retry == 0)
+            {
+                ESP_LOGI(TAG,"Reached Maximum retry"); /* Error message */
+                enter_deep_sleep(); //  go to sleep if reached max retries
+            }
         }
-        else ESP_LOGI(TAG,"Reached Maximum retry"); /* Error message */
-
-        enter_deep_sleep(); //  go to sleep if reached max retries
     }
 
     esp_http_client_cleanup(client); /* Operation is complete */
@@ -117,7 +120,7 @@ void configure_sleep(void) {
  
     printf("Configuring EXT0 wakeup on GPIO pin %d\n", WAKEUP_PIN);
 
-    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(WAKEUP_PIN, 0)); //WAKEUP_PIN used as interrupt to wake up from deep sleep, wake up level = low
+    ESP_ERROR_CHECK(esp_sleep_enable_ext0_wakeup(WAKEUP_PIN, 1)); //WAKEUP_PIN used as interrupt to wake up from deep sleep, wake up level = HIGH
 
     // Configure pullup/downs via RTCIO to tie wakeup pins to inactive level during deep sleep.
     // EXT0 resides in the same power domain (RTC_PERIPH) as the RTC IO pullup/downs.

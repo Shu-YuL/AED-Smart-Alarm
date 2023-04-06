@@ -29,9 +29,9 @@
 #define ESP_INR_FLAG_DEFAULT 0
 
 /* Test URL to perform HTTP request */
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbw_xZIRQbZ2CVw4Qh_JAPOqhXy6XPgs0BYqGGMt2zvEElzEetMWkGOyVf_LmU3XIHQ9Ug/exec?MAC=%s&IP=%s"
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyep2FqLkWTKd59XXp0cULkYX_-l1KyVdksIugKmTktqbAtWeEz-6xSAh9aoOt9Pw4MQw/exec?MAC=%s&IP=%s"
 /* Official URL to perform HTTP request */
-// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbz00T8xuK0Al_jOZzJMmi17tDMMRb6GcCaSH8MJ2rD32jHkeRXG0UCwRyipQSP2xmRs/exec?MAC=%s&IP=%s"
+// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyJ4tUr6knxRxIuVFZdto3vQio3abIqe8loPH8j4ymoyhJoLbtOZMy6TNae-TfGmGWH/exec?MAC=%s&IP=%s"
 
 extern char my_MAC[MAC_length];
 extern char my_IP[IP_length];;
