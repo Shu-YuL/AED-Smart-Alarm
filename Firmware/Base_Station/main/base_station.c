@@ -172,7 +172,7 @@ void Clear_Flag_Task(void *params)
         {
             printf("GPIO %d was pressed. The state is %d\n", pinNumber, gpio_get_level(Clear_PIN));
             Clear_flag = true;
-            buzzer_pause_count = 5;
+            buzzer_pause_count = 2;
             /* turn off the buzzer output */
             ledc_stop(LEDC_MODE, LEDC_CHANNEL,0);
             ledc_timer_pause(LEDC_MODE, LEDC_CHANNEL);
