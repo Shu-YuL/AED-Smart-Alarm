@@ -20,9 +20,9 @@
 #define TASK_STACK_SIZE 8192 // HTTP request task stack size
 
 /* Test URL to perform HTTP request */
-#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyep2FqLkWTKd59XXp0cULkYX_-l1KyVdksIugKmTktqbAtWeEz-6xSAh9aoOt9Pw4MQw/exec?read"
+// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyep2FqLkWTKd59XXp0cULkYX_-l1KyVdksIugKmTktqbAtWeEz-6xSAh9aoOt9Pw4MQw/exec?read"
 /* Official URL to perform HTTP request */
-// #define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyJ4tUr6knxRxIuVFZdto3vQio3abIqe8loPH8j4ymoyhJoLbtOZMy6TNae-TfGmGWH/exec?read"
+#define HTTP_GET_URL "https://script.google.com/macros/s/AKfycbyJ4tUr6knxRxIuVFZdto3vQio3abIqe8loPH8j4ymoyhJoLbtOZMy6TNae-TfGmGWH/exec?read"
 
 #define LOC_MAX_LEN 20
 
