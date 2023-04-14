@@ -29,7 +29,7 @@
 // #define WIFI_EAP_ID 0
 // #define WIFI_EAP_USERNAME 0
 // #define WIFI_EAP_PASSWORD 0
-#define WIFI_MAX_TRIES 10
+#define WIFI_MAX_TRIES 50
 #define WIFI_AUTHORIZATION_MODE_THRESHOLD  WIFI_AUTH_OPEN //The weakest authmode allowed of the AP
 
 #define WIFI_CONNECTED_BIT BIT0
